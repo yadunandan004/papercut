@@ -40,6 +40,8 @@
 		E4766D6FA3D8454FB9DB92DB /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D7B9F43942541898D66D673 /* CoreTelephony.framework */; };
 		045F46A21A244F3F9D970E1F /* CDVFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD4E66001924FD4B56EE7A9 /* CDVFileTransfer.m */; };
 		04BA2D519BC24315B33AC4C2 /* NativeSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 8318ACB184FB49C3B8033963 /* NativeSettings.m */; };
+		1C9B3951D28047ECB19B9DB7 /* SQLitePlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E8C0790092C419AB22A5550 /* SQLitePlugin.m */; };
+		0163FCCD59364DADB67C9C5F /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = AABFE45044C541B4BF79EA9A /* libsqlite3.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -125,6 +127,9 @@
 		DE04A6303D0742CF987909A5 /* CDVFileTransfer.h */ = {isa = PBXFileReference; name = "CDVFileTransfer.h"; path = "cordova-plugin-file-transfer/CDVFileTransfer.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
 		8318ACB184FB49C3B8033963 /* NativeSettings.m */ = {isa = PBXFileReference; name = "NativeSettings.m"; path = "com.phonegap.plugins.nativesettingsopener/NativeSettings.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
 		11CE75A05BBE485A87B4FB76 /* NativeSettings.h */ = {isa = PBXFileReference; name = "NativeSettings.h"; path = "com.phonegap.plugins.nativesettingsopener/NativeSettings.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		3E8C0790092C419AB22A5550 /* SQLitePlugin.m */ = {isa = PBXFileReference; name = "SQLitePlugin.m"; path = "cordova-sqlite-storage/SQLitePlugin.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		27AC319DBB5D44D79C425BFD /* SQLitePlugin.h */ = {isa = PBXFileReference; name = "SQLitePlugin.h"; path = "cordova-sqlite-storage/SQLitePlugin.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		AABFE45044C541B4BF79EA9A /* libsqlite3.dylib */ = {isa = PBXFileReference; name = "libsqlite3.dylib"; path = "usr/lib/libsqlite3.dylib"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = compiled.mach-o.dylib; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +144,7 @@
 				62954530AD5240B782160842 /* Security.framework in Frameworks */,
 				88772CF500754F99B457151E /* SystemConfiguration.framework in Frameworks */,
 				E4766D6FA3D8454FB9DB92DB /* CoreTelephony.framework in Frameworks */,
+				0163FCCD59364DADB67C9C5F /* libsqlite3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -214,6 +220,7 @@
 				280AA2C2D92148E4818BCF6C /* Security.framework */,
 				AF1FA31A793C4FDF93879807 /* SystemConfiguration.framework */,
 				1D7B9F43942541898D66D673 /* CoreTelephony.framework */,
+				AABFE45044C541B4BF79EA9A /* libsqlite3.dylib */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -279,6 +286,8 @@
 				DE04A6303D0742CF987909A5 /* CDVFileTransfer.h */,
 				8318ACB184FB49C3B8033963 /* NativeSettings.m */,
 				11CE75A05BBE485A87B4FB76 /* NativeSettings.h */,
+				3E8C0790092C419AB22A5550 /* SQLitePlugin.m */,
+				27AC319DBB5D44D79C425BFD /* SQLitePlugin.h */,
 			);
 			name = Plugins;
 			path = "V2 Test/Plugins";
@@ -412,6 +421,7 @@
 				07FAEA5C58AF4A3E9D32DD79 /* CDVReachability.m in Sources */,
 				045F46A21A244F3F9D970E1F /* CDVFileTransfer.m in Sources */,
 				04BA2D519BC24315B33AC4C2 /* NativeSettings.m in Sources */,
+				1C9B3951D28047ECB19B9DB7 /* SQLitePlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

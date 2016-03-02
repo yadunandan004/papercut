@@ -4,6 +4,7 @@ import {PrintPage} from './pages/print/print';
 import {ShopselPage} from './pages/shopsel/shopsel';
 import {Inject} from 'angular2/core';
 
+
 @App({
   templateUrl: 'build/app.html',
   config: {} // http://ionicframework.com/docs/v2/api/config/Config/

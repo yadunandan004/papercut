@@ -20,7 +20,8 @@
   "description": "papercut: An Ionic project",
   "cordovaPlugins": [
     "cordova-plugin-whitelist",
-    "cordova-plugin-geolocation"
+    "cordova-plugin-geolocation",
+    "cordova-sqlite-storage"
   ],
   "cordovaPlatforms": [
     "ios",

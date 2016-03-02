@@ -43,6 +43,10 @@
                         {
                             "xml": "<feature name=\"NativeSettings\"><param name=\"android-package\" value=\"com.phonegap.plugins.nativesettings.NativeSettings\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"SQLitePlugin\"><param name=\"android-package\" value=\"io.sqlc.SQLitePlugin\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -151,6 +155,9 @@
             "PACKAGE_NAME": "io.ionic.starter"
         },
         "com.phonegap.plugins.nativesettingsopener": {
+            "PACKAGE_NAME": "io.ionic.starter"
+        },
+        "cordova-sqlite-storage": {
             "PACKAGE_NAME": "io.ionic.starter"
         }
     },
@@ -400,6 +407,13 @@
             "id": "com.phonegap.plugins.nativesettingsopener.Settings",
             "clobbers": [
                 "cordova.plugins.settings"
+            ]
+        },
+        {
+            "file": "plugins/cordova-sqlite-storage/www/SQLitePlugin.js",
+            "id": "cordova-sqlite-storage.SQLitePlugin",
+            "clobbers": [
+                "SQLitePlugin"
             ]
         }
     ]

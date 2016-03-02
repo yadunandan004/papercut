@@ -293,6 +293,14 @@ module.exports = [
         "clobbers": [
             "cordova.plugins.settings"
         ]
+    },
+    {
+        "file": "plugins/cordova-sqlite-storage/www/SQLitePlugin.js",
+        "id": "cordova-sqlite-storage.SQLitePlugin",
+        "pluginId": "cordova-sqlite-storage",
+        "clobbers": [
+            "SQLitePlugin"
+        ]
     }
 ];
 module.exports.metadata = 

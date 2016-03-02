@@ -4,5 +4,6 @@
     "AVFoundation.framework": 1,
     "Security.framework": 1,
     "SystemConfiguration.framework": 2,
-    "CoreTelephony.framework": 1
+    "CoreTelephony.framework": 1,
+    "libsqlite3.dylib": 1
 }

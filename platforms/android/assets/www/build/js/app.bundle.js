@@ -3190,9 +3190,9 @@
 
 	var _login = __webpack_require__(358);
 
-	var _print = __webpack_require__(360);
+	var _print = __webpack_require__(361);
 
-	var _shopsel = __webpack_require__(362);
+	var _shopsel = __webpack_require__(363);
 
 	var _core = __webpack_require__(7);
 
@@ -62174,6 +62174,8 @@
 
 	var _signup = __webpack_require__(359);
 
+	var _userData = __webpack_require__(360);
+
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	/*
@@ -62188,17 +62190,18 @@
 	  _createClass(LoginPage, null, [{
 	    key: 'parameters',
 	    get: function get() {
-	      return [[_ionic.NavController], [_ionic.NavParams], [_ionic.Platform]];
+	      return [[_ionic.NavController], [_ionic.NavParams], [_ionic.Platform], [_userData.UserData]];
 	    }
 	  }]);
 
-	  function LoginPage(nav, navParams, platform) {
+	  function LoginPage(nav, navParams, platform, userData) {
 	    _classCallCheck(this, LoginPage);
 
 	    this.nav = nav;
+	    this.userData = userData;
 	    this.platform = platform;
 	    this.listen();
-	    console.log(this.profile);
+	    this.userData = userData;
 	  }
 
 	  _createClass(LoginPage, [{
@@ -62241,11 +62244,7 @@
 	        pass: this.pass
 	      }, { 'Content-type': 'application/json' }, function (response) {
 	        try {
-	          //response.data = JSON.parse(response.data);
-	          var log_status = "Log in Fail";
-	          if (response.data == 1) {
-	            log_status = "Log In success";
-	          }
+
 	          var alert = _ionic.Alert.create({
 	            title: 'Response',
 	            subTitle: JSON.parse(response.data),
@@ -62411,6 +62410,55 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.UserData = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _dec, _class;
+
+	var _core = __webpack_require__(7);
+
+	var _ionic = __webpack_require__(5);
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	/*
+	  Generated class for the UserData provider.
+
+	  See https://angular.io/docs/ts/latest/guide/dependency-injection.html
+	  for more info on providers and Angular 2 DI.
+	*/
+	var UserData = exports.UserData = (_dec = (0, _core.Injectable)(), _dec(_class = function () {
+	  function UserData() {
+	    _classCallCheck(this, UserData);
+
+	    this.user = 'yadu';
+	  }
+
+	  _createClass(UserData, [{
+	    key: 'storeUser',
+	    value: function storeUser() {
+	      this.storage = new _ionic.Storage(_ionic.SqlStorage);
+	      this.storage.query('CREATE TABLE IF NOT EXISTS people (id INTEGER PRIMARY KEY AUTOINCREMENT, firstname TEXT, lastname TEXT)').then(function (data) {
+	        console.log("TABLE CREATED -> " + JSON.stringify(data.res));
+	      }, function (error) {
+	        console.log("ERROR -> " + JSON.stringify(error.err));
+	      });
+	    }
+	  }]);
+
+	  return UserData;
+	}()) || _class);
+
+/***/ },
+/* 361 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	exports.PrintPage = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -62419,7 +62467,7 @@
 
 	var _ionic = __webpack_require__(5);
 
-	var _selectFile = __webpack_require__(361);
+	var _selectFile = __webpack_require__(362);
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -62456,7 +62504,7 @@
 	}()) || _class);
 
 /***/ },
-/* 361 */
+/* 362 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -62647,7 +62695,7 @@
 	}()) || _class);
 
 /***/ },
-/* 362 */
+/* 363 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

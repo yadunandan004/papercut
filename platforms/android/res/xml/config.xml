@@ -30,6 +30,9 @@
     <feature name="NativeSettings">
         <param name="android-package" value="com.phonegap.plugins.nativesettings.NativeSettings" />
     </feature>
+    <feature name="SQLitePlugin">
+        <param name="android-package" value="io.sqlc.SQLitePlugin" />
+    </feature>
     <allow-intent href="market:*" />
     <name>V2 Test</name>
     <description>An Ionic Framework and Cordova project.</description>

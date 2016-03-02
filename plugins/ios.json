@@ -30,6 +30,9 @@
         },
         "com.phonegap.plugins.nativesettingsopener": {
             "PACKAGE_NAME": "io.ionic.starter"
+        },
+        "cordova-sqlite-storage": {
+            "PACKAGE_NAME": "io.ionic.starter"
         }
     },
     "dependent_plugins": {

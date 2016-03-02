@@ -51,6 +51,9 @@
     <feature name="NativeSettings">
         <param name="ios-package" value="NativeSettings" />
     </feature>
+    <feature name="SQLitePlugin">
+        <param name="ios-package" value="SQLitePlugin" />
+    </feature>
     <allow-intent href="itms:*" />
     <allow-intent href="itms-apps:*" />
     <name>V2 Test</name>
