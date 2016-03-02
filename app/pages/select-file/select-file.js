@@ -18,11 +18,26 @@ export class SelectFilePage {
     this.nav = nav;
     this.platform=platform;
     this.file="not selected";
+    this.checked=false;
+    this.name="B/W";
+
+  }
+  toggle(event)
+  {
+    //alert(this.checked);
+    if(this.checked===false)
+    {
+      this.name="Colour";
+    }
+    if(this.checked===true)
+    {
+      this.name="B/W";
+    }
   }
   selectFile()
   {
      var success = function(data) {
-        alert(data.filepath);
+        
         var filepath=data.filepath;
         function win(r) {
             console.log("Code = " + r.responseCode);
@@ -53,7 +68,7 @@ export class SelectFilePage {
             }
         };
 
-        ft.upload(filepath, uri, win, fail, options); 
+        ft.upload(filepath, uri, win, fail, options);
     };
 
     var error = function(msg) {
@@ -67,7 +82,7 @@ export class SelectFilePage {
     this.platform.ready().then(() => {
       var options = {
         quality: 80,
-        destinationType: Camera.DestinationType.DATA_URL,
+        destinationType: Camera.DestinationType.FILE_URI,
         sourceType: Camera.PictureSourceType.CAMERA,
         allowEdit: false,
         encodingType: Camera.EncodingType.JPEG,
@@ -76,25 +91,80 @@ export class SelectFilePage {
       // https://github.com/apache/cordova-plugin-camera#module_camera.getPicture
       navigator.camera.getPicture(
         (data) => {
-          var imagedata = "data:image/jpeg;base64," + data;
+          //var imagedata = "data:image/jpeg;base64," + data;
           // this._zone.run(()=> this.images.unshift({
             // src: imagedata
            //}))
+           var filepath=data;
+            function win(r) {
+            console.log("Code = " + r.responseCode);
+            console.log("Response = " + r.response);
+            console.log("Sent = " + r.bytesSent);
+        }
+
+        function fail(error) {
+            console.log("An error has occurred: Code = " + error.code);
+            console.log("upload error source " + error.source);
+            console.log("upload error target " + error.target);
+        }
+        var uri = encodeURI("http://print-yadunandan004.c9users.io:8080/prints/addpage");
+        var options = new FileUploadOptions();
+        options.fileKey="docs";
+        options.fileName=filepath.substr(filepath.lastIndexOf('/')+1);
+        var params = {};
+        params.user = "abdulla@gmail.com";
+        options.params=params;
+
+        var ft = new FileTransfer();
+        ft.onprogress = function(progressEvent) {
+            if (progressEvent.lengthComputable) {
+                loadingStatus.setPercentage(progressEvent.loaded / progressEvent.total);
+            } 
+            else {
+                loadingStatus.increment();
+            }
+        };
+
+        ft.upload(filepath, uri, win, fail, options);
         }, (error) => {
           alert(error);
         }, options
       );
     });
   }
-  uploadFile(event,item)
+  uploadFile(filepath)
   {
-    alert(this.file);
-    cordovaHTTP.uploadFile("http://print-yadunandan004.c9users.io:8080/prints/addpage", {
-    user:'abdulla@gmail.com'
-    }, { Authorization: "OAuth2: token" }, "/storage/emulated/0/Download/_20160216_170813.JPG", "docs", function(response) {
-        alert(response);
-    }, function(response) {
-        console.error(response.error);
-    });
+    //var filepath=data.filepath;
+        function win(r) {
+            console.log("Code = " + r.responseCode);
+            console.log("Response = " + r.response);
+            console.log("Sent = " + r.bytesSent);
+        }
+
+        function fail(error) {
+            console.log("An error has occurred: Code = " + error.code);
+            console.log("upload error source " + error.source);
+            console.log("upload error target " + error.target);
+        }
+        var uri = encodeURI("http://print-yadunandan004.c9users.io:8080/prints/addpage");
+        var options = new FileUploadOptions();
+        options.fileKey="docs";
+        options.fileName=filepath.substr(filepath.lastIndexOf('/')+1);
+        var params = {};
+        params.user = "abdulla@gmail.com";
+        options.params=params;
+
+        var ft = new FileTransfer();
+        ft.onprogress = function(progressEvent) {
+            if (progressEvent.lengthComputable) {
+                loadingStatus.setPercentage(progressEvent.loaded / progressEvent.total);
+            } 
+            else {
+                loadingStatus.increment();
+            }
+        };
+
+        ft.upload(filepath, uri, win, fail, options); 
   }
+
 }

@@ -62462,7 +62462,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+	    value: true
 	});
 	exports.SelectFilePage = undefined;
 
@@ -62481,104 +62481,156 @@
 	  Ionic pages and navigation.
 	*/
 	var SelectFilePage = exports.SelectFilePage = (_dec = (0, _ionic.Page)({
-	  templateUrl: 'build/pages/select-file/select-file.html'
+	    templateUrl: 'build/pages/select-file/select-file.html'
 	}), _dec(_class = function () {
-	  _createClass(SelectFilePage, null, [{
-	    key: 'parameters',
-	    get: function get() {
-	      return [[_ionic.NavController], [_ionic.Platform]];
-	    }
-	  }]);
-
-	  function SelectFilePage(nav, platform) {
-	    _classCallCheck(this, SelectFilePage);
-
-	    this.nav = nav;
-	    this.platform = platform;
-	    this.file = "not selected";
-	  }
-
-	  _createClass(SelectFilePage, [{
-	    key: 'selectFile',
-	    value: function selectFile() {
-	      var success = function success(data) {
-	        alert(data.filepath);
-	        var filepath = data.filepath;
-	        function win(r) {
-	          console.log("Code = " + r.responseCode);
-	          console.log("Response = " + r.response);
-	          console.log("Sent = " + r.bytesSent);
+	    _createClass(SelectFilePage, null, [{
+	        key: 'parameters',
+	        get: function get() {
+	            return [[_ionic.NavController], [_ionic.Platform]];
 	        }
+	    }]);
 
-	        function fail(error) {
-	          console.log("An error has occurred: Code = " + error.code);
-	          console.log("upload error source " + error.source);
-	          console.log("upload error target " + error.target);
+	    function SelectFilePage(nav, platform) {
+	        _classCallCheck(this, SelectFilePage);
+
+	        this.nav = nav;
+	        this.platform = platform;
+	        this.file = "not selected";
+	    }
+
+	    _createClass(SelectFilePage, [{
+	        key: 'selectFile',
+	        value: function selectFile() {
+	            var success = function success(data) {
+
+	                var filepath = data.filepath;
+	                function win(r) {
+	                    console.log("Code = " + r.responseCode);
+	                    console.log("Response = " + r.response);
+	                    console.log("Sent = " + r.bytesSent);
+	                }
+
+	                function fail(error) {
+	                    console.log("An error has occurred: Code = " + error.code);
+	                    console.log("upload error source " + error.source);
+	                    console.log("upload error target " + error.target);
+	                }
+	                var uri = encodeURI("http://print-yadunandan004.c9users.io:8080/prints/addpage");
+	                var options = new FileUploadOptions();
+	                options.fileKey = "docs";
+	                options.fileName = filepath.substr(filepath.lastIndexOf('/') + 1);
+	                var params = {};
+	                params.user = "abdulla@gmail.com";
+	                options.params = params;
+
+	                var ft = new FileTransfer();
+	                ft.onprogress = function (progressEvent) {
+	                    if (progressEvent.lengthComputable) {
+	                        loadingStatus.setPercentage(progressEvent.loaded / progressEvent.total);
+	                    } else {
+	                        loadingStatus.increment();
+	                    }
+	                };
+
+	                ft.upload(filepath, uri, win, fail, options);
+	            };
+
+	            var error = function error(msg) {
+	                console.log(msg);
+	            };
+
+	            filechooser.open({}, success, error);
 	        }
-	        var uri = encodeURI("http://print-yadunandan004.c9users.io:8080/prints/addpage");
-	        var options = new FileUploadOptions();
-	        options.fileKey = "docs";
-	        options.fileName = filepath.substr(filepath.lastIndexOf('/') + 1);
-	        var params = {};
-	        params.user = "abdulla@gmail.com";
-	        options.params = params;
+	    }, {
+	        key: 'takePhoto',
+	        value: function takePhoto() {
+	            this.platform.ready().then(function () {
+	                var options = {
+	                    quality: 80,
+	                    destinationType: Camera.DestinationType.FILE_URI,
+	                    sourceType: Camera.PictureSourceType.CAMERA,
+	                    allowEdit: false,
+	                    encodingType: Camera.EncodingType.JPEG,
+	                    saveToPhotoAlbum: true
+	                };
+	                // https://github.com/apache/cordova-plugin-camera#module_camera.getPicture
+	                navigator.camera.getPicture(function (data) {
+	                    //var imagedata = "data:image/jpeg;base64," + data;
+	                    // this._zone.run(()=> this.images.unshift({
+	                    // src: imagedata
+	                    //}))
+	                    var filepath = data;
+	                    function win(r) {
+	                        console.log("Code = " + r.responseCode);
+	                        console.log("Response = " + r.response);
+	                        console.log("Sent = " + r.bytesSent);
+	                    }
 
-	        var ft = new FileTransfer();
-	        ft.onprogress = function (progressEvent) {
-	          if (progressEvent.lengthComputable) {
-	            loadingStatus.setPercentage(progressEvent.loaded / progressEvent.total);
-	          } else {
-	            loadingStatus.increment();
-	          }
-	        };
+	                    function fail(error) {
+	                        console.log("An error has occurred: Code = " + error.code);
+	                        console.log("upload error source " + error.source);
+	                        console.log("upload error target " + error.target);
+	                    }
+	                    var uri = encodeURI("http://print-yadunandan004.c9users.io:8080/prints/addpage");
+	                    var options = new FileUploadOptions();
+	                    options.fileKey = "docs";
+	                    options.fileName = filepath.substr(filepath.lastIndexOf('/') + 1);
+	                    var params = {};
+	                    params.user = "abdulla@gmail.com";
+	                    options.params = params;
 
-	        ft.upload(filepath, uri, win, fail, options);
-	      };
+	                    var ft = new FileTransfer();
+	                    ft.onprogress = function (progressEvent) {
+	                        if (progressEvent.lengthComputable) {
+	                            loadingStatus.setPercentage(progressEvent.loaded / progressEvent.total);
+	                        } else {
+	                            loadingStatus.increment();
+	                        }
+	                    };
 
-	      var error = function error(msg) {
-	        console.log(msg);
-	      };
+	                    ft.upload(filepath, uri, win, fail, options);
+	                }, function (error) {
+	                    alert(error);
+	                }, options);
+	            });
+	        }
+	    }, {
+	        key: 'uploadFile',
+	        value: function uploadFile(filepath) {
+	            //var filepath=data.filepath;
+	            function win(r) {
+	                console.log("Code = " + r.responseCode);
+	                console.log("Response = " + r.response);
+	                console.log("Sent = " + r.bytesSent);
+	            }
 
-	      filechooser.open({}, success, error);
-	    }
-	  }, {
-	    key: 'takePhoto',
-	    value: function takePhoto() {
-	      this.platform.ready().then(function () {
-	        var options = {
-	          quality: 80,
-	          destinationType: Camera.DestinationType.DATA_URL,
-	          sourceType: Camera.PictureSourceType.CAMERA,
-	          allowEdit: false,
-	          encodingType: Camera.EncodingType.JPEG,
-	          saveToPhotoAlbum: true
-	        };
-	        // https://github.com/apache/cordova-plugin-camera#module_camera.getPicture
-	        navigator.camera.getPicture(function (data) {
-	          var imagedata = "data:image/jpeg;base64," + data;
-	          // this._zone.run(()=> this.images.unshift({
-	          // src: imagedata
-	          //}))
-	        }, function (error) {
-	          alert(error);
-	        }, options);
-	      });
-	    }
-	  }, {
-	    key: 'uploadFile',
-	    value: function uploadFile(event, item) {
-	      alert(this.file);
-	      cordovaHTTP.uploadFile("http://print-yadunandan004.c9users.io:8080/prints/addpage", {
-	        user: 'abdulla@gmail.com'
-	      }, { Authorization: "OAuth2: token" }, "/storage/emulated/0/Download/_20160216_170813.JPG", "docs", function (response) {
-	        alert(response);
-	      }, function (response) {
-	        console.error(response.error);
-	      });
-	    }
-	  }]);
+	            function fail(error) {
+	                console.log("An error has occurred: Code = " + error.code);
+	                console.log("upload error source " + error.source);
+	                console.log("upload error target " + error.target);
+	            }
+	            var uri = encodeURI("http://print-yadunandan004.c9users.io:8080/prints/addpage");
+	            var options = new FileUploadOptions();
+	            options.fileKey = "docs";
+	            options.fileName = filepath.substr(filepath.lastIndexOf('/') + 1);
+	            var params = {};
+	            params.user = "abdulla@gmail.com";
+	            options.params = params;
 
-	  return SelectFilePage;
+	            var ft = new FileTransfer();
+	            ft.onprogress = function (progressEvent) {
+	                if (progressEvent.lengthComputable) {
+	                    loadingStatus.setPercentage(progressEvent.loaded / progressEvent.total);
+	                } else {
+	                    loadingStatus.increment();
+	                }
+	            };
+
+	            ft.upload(filepath, uri, win, fail, options);
+	        }
+	    }]);
+
+	    return SelectFilePage;
 	}()) || _class);
 
 /***/ },
