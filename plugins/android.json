@@ -30,6 +30,9 @@
         },
         "cordova-plugin-file-transfer": {
             "PACKAGE_NAME": "io.ionic.starter"
+        },
+        "com.phonegap.plugins.nativesettingsopener": {
+            "PACKAGE_NAME": "io.ionic.starter"
         }
     },
     "dependent_plugins": {}

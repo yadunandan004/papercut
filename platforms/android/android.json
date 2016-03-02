@@ -39,6 +39,10 @@
                         {
                             "xml": "<feature name=\"FileTransfer\"><param name=\"android-package\" value=\"org.apache.cordova.filetransfer.FileTransfer\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"NativeSettings\"><param name=\"android-package\" value=\"com.phonegap.plugins.nativesettings.NativeSettings\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -144,6 +148,9 @@
             "PACKAGE_NAME": "io.ionic.starter"
         },
         "cordova-plugin-file-transfer": {
+            "PACKAGE_NAME": "io.ionic.starter"
+        },
+        "com.phonegap.plugins.nativesettingsopener": {
             "PACKAGE_NAME": "io.ionic.starter"
         }
     },
@@ -386,6 +393,13 @@
             "id": "cordova-plugin-file-transfer.FileTransfer",
             "clobbers": [
                 "window.FileTransfer"
+            ]
+        },
+        {
+            "file": "plugins/com.phonegap.plugins.nativesettingsopener/www/settings.js",
+            "id": "com.phonegap.plugins.nativesettingsopener.Settings",
+            "clobbers": [
+                "cordova.plugins.settings"
             ]
         }
     ]

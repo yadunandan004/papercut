@@ -35,6 +35,10 @@
                         {
                             "xml": "<feature name=\"FileTransfer\"><param name=\"ios-package\" value=\"CDVFileTransfer\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"NativeSettings\"><param name=\"ios-package\" value=\"NativeSettings\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -74,6 +78,9 @@
             "PACKAGE_NAME": "io.ionic.starter"
         },
         "cordova-plugin-file-transfer": {
+            "PACKAGE_NAME": "io.ionic.starter"
+        },
+        "com.phonegap.plugins.nativesettingsopener": {
             "PACKAGE_NAME": "io.ionic.starter"
         }
     },
@@ -363,6 +370,14 @@
             "pluginId": "cordova-plugin-file-transfer",
             "clobbers": [
                 "window.FileTransfer"
+            ]
+        },
+        {
+            "file": "plugins/com.phonegap.plugins.nativesettingsopener/www/settings.js",
+            "id": "com.phonegap.plugins.nativesettingsopener.Settings",
+            "pluginId": "com.phonegap.plugins.nativesettingsopener",
+            "clobbers": [
+                "cordova.plugins.settings"
             ]
         }
     ]

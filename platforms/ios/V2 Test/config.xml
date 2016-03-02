@@ -48,6 +48,9 @@
     <feature name="FileTransfer">
         <param name="ios-package" value="CDVFileTransfer" />
     </feature>
+    <feature name="NativeSettings">
+        <param name="ios-package" value="NativeSettings" />
+    </feature>
     <allow-intent href="itms:*" />
     <allow-intent href="itms-apps:*" />
     <name>V2 Test</name>

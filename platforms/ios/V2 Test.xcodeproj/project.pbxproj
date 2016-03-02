@@ -39,6 +39,7 @@
 		07FAEA5C58AF4A3E9D32DD79 /* CDVReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = EE3B5B95CA474662B270E55F /* CDVReachability.m */; };
 		E4766D6FA3D8454FB9DB92DB /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D7B9F43942541898D66D673 /* CoreTelephony.framework */; };
 		045F46A21A244F3F9D970E1F /* CDVFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD4E66001924FD4B56EE7A9 /* CDVFileTransfer.m */; };
+		04BA2D519BC24315B33AC4C2 /* NativeSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 8318ACB184FB49C3B8033963 /* NativeSettings.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -122,6 +123,8 @@
 		1D7B9F43942541898D66D673 /* CoreTelephony.framework */ = {isa = PBXFileReference; name = "CoreTelephony.framework"; path = "System/Library/Frameworks/CoreTelephony.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
 		ADD4E66001924FD4B56EE7A9 /* CDVFileTransfer.m */ = {isa = PBXFileReference; name = "CDVFileTransfer.m"; path = "cordova-plugin-file-transfer/CDVFileTransfer.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
 		DE04A6303D0742CF987909A5 /* CDVFileTransfer.h */ = {isa = PBXFileReference; name = "CDVFileTransfer.h"; path = "cordova-plugin-file-transfer/CDVFileTransfer.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		8318ACB184FB49C3B8033963 /* NativeSettings.m */ = {isa = PBXFileReference; name = "NativeSettings.m"; path = "com.phonegap.plugins.nativesettingsopener/NativeSettings.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		11CE75A05BBE485A87B4FB76 /* NativeSettings.h */ = {isa = PBXFileReference; name = "NativeSettings.h"; path = "com.phonegap.plugins.nativesettingsopener/NativeSettings.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -274,6 +277,8 @@
 				AEB491E4033844008A3EA7DE /* CDVReachability.h */,
 				ADD4E66001924FD4B56EE7A9 /* CDVFileTransfer.m */,
 				DE04A6303D0742CF987909A5 /* CDVFileTransfer.h */,
+				8318ACB184FB49C3B8033963 /* NativeSettings.m */,
+				11CE75A05BBE485A87B4FB76 /* NativeSettings.h */,
 			);
 			name = Plugins;
 			path = "V2 Test/Plugins";
@@ -406,6 +411,7 @@
 				346380709D2B47C8BBFD19DC /* CDVConnection.m in Sources */,
 				07FAEA5C58AF4A3E9D32DD79 /* CDVReachability.m in Sources */,
 				045F46A21A244F3F9D970E1F /* CDVFileTransfer.m in Sources */,
+				04BA2D519BC24315B33AC4C2 /* NativeSettings.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

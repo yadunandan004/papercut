@@ -24,16 +24,12 @@
     <button dark block (click)="selectFile()">Select File</button>
     <button secondary block (click)="takePhoto()"><ion-icon name="ion-camera"></ion-icon>Take a picture</button>
     <ion-item>
-    <ion-label floating>Copies</ion-label>
+    <ion-label><ion-icon name="ion-ios-copy"></ion-icon> Copies</ion-label>
     <ion-input type="text"></ion-input>
   </ion-item>
   <ion-item>
-  <ion-label> Colour</ion-label>
-  <ion-toggle disabled checked="false"></ion-toggle>
-  </ion-item>
-  <ion-item>
-    <ion-label fixed>Filename</ion-label>
-    <ion-input type="text">{{file}}</ion-input>
+  <ion-label> {{name}}</ion-label>
+  <ion-toggle  [(ngModel)]="checked" (click)="toggle($event)"></ion-toggle>
   </ion-item>
   </ion-card-content>
   </ion-card>

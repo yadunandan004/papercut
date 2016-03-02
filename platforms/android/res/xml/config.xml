@@ -27,6 +27,9 @@
     <feature name="FileTransfer">
         <param name="android-package" value="org.apache.cordova.filetransfer.FileTransfer" />
     </feature>
+    <feature name="NativeSettings">
+        <param name="android-package" value="com.phonegap.plugins.nativesettings.NativeSettings" />
+    </feature>
     <allow-intent href="market:*" />
     <name>V2 Test</name>
     <description>An Ionic Framework and Cordova project.</description>
