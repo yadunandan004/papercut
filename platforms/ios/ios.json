@@ -89,6 +89,9 @@
         },
         "cordova-sqlite-storage": {
             "PACKAGE_NAME": "io.ionic.starter"
+        },
+        "cordova-plugin-backbutton": {
+            "PACKAGE_NAME": "io.ionic.starter"
         }
     },
     "dependent_plugins": {},
@@ -393,6 +396,14 @@
             "pluginId": "cordova-sqlite-storage",
             "clobbers": [
                 "SQLitePlugin"
+            ]
+        },
+        {
+            "file": "plugins/cordova-plugin-backbutton/www/Backbutton.js",
+            "id": "cordova-plugin-backbutton.Backbutton",
+            "pluginId": "cordova-plugin-backbutton",
+            "clobbers": [
+                "navigator.Backbutton"
             ]
         }
     ]

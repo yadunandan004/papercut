@@ -1,7 +1,8 @@
-import {Page,NavController,NavParams,Alert,Platform,Storage} from 'ionic-framework/ionic';
+import {Page,NavController,NavParams,Alert,Platform} from 'ionic-framework/ionic';
 import {Inject} from 'angular2/core';
 import {SignupPage} from '../signup/signup';
 import {UserData} from '../../providers/user-data/user-data';
+//import {UserData} from '../../providers/user-data/user-data';
 /*
   Generated class for the LoginPage page.
 
@@ -9,7 +10,8 @@ import {UserData} from '../../providers/user-data/user-data';
   Ionic pages and navigation.
 */
 @Page({
-  templateUrl: 'build/pages/login/login.html'
+  templateUrl: 'build/pages/login/login.html',
+  providers:[UserData]
 })
 export class LoginPage {
 
@@ -20,8 +22,7 @@ export class LoginPage {
   		this.nav = nav;
       this.userData=userData;
       this.platform=platform;
-      this.listen();
-      this.userData = userData;    
+      this.listen();   
   }
   	listen()
     {
@@ -34,14 +35,14 @@ export class LoginPage {
                   subTitle: data,
                   buttons: ['Dismiss']
                 });
+              
                 this.nav.present(alert);
         });
       });
     }
     signup(event, item) {
-
      this.nav.push(SignupPage);
-  }
+    }
   	print(event,item){
   		//this.nav.push(PrintPage);
   	}
@@ -53,18 +54,14 @@ export class LoginPage {
     pass: this.pass
     },{'Content-type' :  'application/json'},response=>{
     try {
-        
-        var alert = Alert.create({
-                  title: 'Response',
-                  subTitle: JSON.parse(response.data),
-                  buttons: ['Dismiss']
-                });
-                this.nav.present(alert);
+        var resdat=JSON.parse(response.data);
+        this.userData.createPerson('user',resdat);
+
         } catch(e) {
         console.error("JSON parsing error");
         }
       });
-        }
+    }
 
         alerter()
         {

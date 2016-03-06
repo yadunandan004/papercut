@@ -3196,26 +3196,32 @@
 
 	var _core = __webpack_require__(7);
 
+	var _userData = __webpack_require__(360);
+
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	// http://ionicframework.com/docs/v2/api/config/Config/
 	var MyApp = exports.MyApp = (_dec = (0, _ionic.App)({
 	  templateUrl: 'build/app.html',
-	  config: {} }), _dec(_class = function () {
+	  config: {}, // http://ionicframework.com/docs/v2/api/config/Config/
+	  providers: [_userData.UserData]
+	}), _dec(_class = function () {
 	  _createClass(MyApp, null, [{
 	    key: 'parameters',
 	    get: function get() {
-	      return [[_ionic.Platform], [_ionic.IonicApp]];
+	      return [[_ionic.Platform], [_ionic.IonicApp], [_userData.UserData]];
 	    }
 	  }]);
 
-	  function MyApp(platform, app) {
+	  function MyApp(platform, app, userData) {
 	    _classCallCheck(this, MyApp);
 
 	    this.app = app;
 	    this.platform = platform;
+	    this.userData = userData;
+	    //this.nav=nav;
 
 	    this.pages = [{ title: 'Login Page', component: _login.LoginPage }, { title: 'Print Page', component: _print.PrintPage }, { title: 'Shop Selection', component: _shopsel.ShopselPage }];
+
 	    this.rootPage = _login.LoginPage;
 	    this.platform.ready().then(function () {
 	      // The platform is now ready. Note: if this callback fails to fire, follow
@@ -3239,13 +3245,36 @@
 	  }
 
 	  _createClass(MyApp, [{
+	    key: 'logout',
+	    value: function logout() {
+	      var _this = this;
+
+	      var alert = _ionic.Alert.create({
+	        title: 'Response',
+	        subTitle: 'Are you Sure?',
+	        buttons: [{
+	          text: 'Cancel',
+	          handler: function handler(data) {
+	            console.log('Cancel clicked');
+	          }
+	        }, {
+	          text: 'Ya',
+	          handler: function handler(data) {
+	            _this.userData.logout('user');
+	          }
+	        }]
+	      });
+	      this.userData.logout('user');
+	      //this.app.present(alert);
+	    }
+	  }, {
 	    key: 'openPage',
 	    value: function openPage(page) {
 	      // close the menu when clicking a link from the menu
 	      this.app.getComponent('leftMenu').close();
 	      // navigate to the new page if it is not the current page
-	      var nav = this.app.getComponent('nav');
-	      nav.setRoot(page.component);
+	      var navg = this.app.getComponent('nav');
+	      navg.setRoot(page.component);
 	    }
 	  }]);
 
@@ -62178,6 +62207,7 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+	//import {UserData} from '../../providers/user-data/user-data';
 	/*
 	  Generated class for the LoginPage page.
 
@@ -62185,7 +62215,8 @@
 	  Ionic pages and navigation.
 	*/
 	var LoginPage = exports.LoginPage = (_dec = (0, _ionic.Page)({
-	  templateUrl: 'build/pages/login/login.html'
+	  templateUrl: 'build/pages/login/login.html',
+	  providers: [_userData.UserData]
 	}), _dec(_class = function () {
 	  _createClass(LoginPage, null, [{
 	    key: 'parameters',
@@ -62201,7 +62232,6 @@
 	    this.userData = userData;
 	    this.platform = platform;
 	    this.listen();
-	    this.userData = userData;
 	  }
 
 	  _createClass(LoginPage, [{
@@ -62218,6 +62248,7 @@
 	            subTitle: data,
 	            buttons: ['Dismiss']
 	          });
+
 	          _this.nav.present(alert);
 	        });
 	      });
@@ -62225,7 +62256,6 @@
 	  }, {
 	    key: 'signup',
 	    value: function signup(event, item) {
-
 	      this.nav.push(_signup.SignupPage);
 	    }
 	  }, {
@@ -62244,13 +62274,8 @@
 	        pass: this.pass
 	      }, { 'Content-type': 'application/json' }, function (response) {
 	        try {
-
-	          var alert = _ionic.Alert.create({
-	            title: 'Response',
-	            subTitle: JSON.parse(response.data),
-	            buttons: ['Dismiss']
-	          });
-	          _this2.nav.present(alert);
+	          var resdat = JSON.parse(response.data);
+	          _this2.userData.createPerson('user', resdat);
 	        } catch (e) {
 	          console.error("JSON parsing error");
 	        }
@@ -62429,18 +62454,154 @@
 	  for more info on providers and Angular 2 DI.
 	*/
 	var UserData = exports.UserData = (_dec = (0, _core.Injectable)(), _dec(_class = function () {
-	  function UserData() {
+	  _createClass(UserData, null, [{
+	    key: 'parameters',
+	    get: function get() {
+	      return [[_ionic.Platform]];
+	    }
+	  }]);
+
+	  function UserData(platform) {
 	    _classCallCheck(this, UserData);
 
+	    this.platform = platform;
 	    this.user = 'yadu';
 	  }
 
 	  _createClass(UserData, [{
-	    key: 'storeUser',
-	    value: function storeUser() {
+	    key: 'initStorage',
+	    value: function initStorage(person) {
 	      this.storage = new _ionic.Storage(_ionic.SqlStorage);
-	      this.storage.query('CREATE TABLE IF NOT EXISTS people (id INTEGER PRIMARY KEY AUTOINCREMENT, firstname TEXT, lastname TEXT)').then(function (data) {
+	      var quer = '';
+	      if (person == 'user') {
+	        quer = 'CREATE TABLE IF NOT EXISTS orders (id INTEGER PRIMARY KEY AUTOINCREMENT, shopname TEXT, shopid TEXT,pages TEXT,amount INTEGER,date TEXT,completion INTEGER)';
+	      } else if (person == 'shop') {
+	        quer = 'CREATE TABLE IF NOT EXISTS orders (id INTEGER PRIMARY KEY AUTOINCREMENT, user TEXT, pages TEXT,amount INTEGER,date TEXT,completion INTEGER)';
+	      }
+	      this.storage.query(quer).then(function (data) {
 	        console.log("TABLE CREATED -> " + JSON.stringify(data.res));
+	      }, function (error) {
+	        console.log("ERROR -> " + JSON.stringify(error.err));
+	      });
+	    }
+	  }, {
+	    key: 'createPerson',
+	    value: function createPerson(person, details) {
+	      var _this = this;
+
+	      this.storage = new _ionic.Storage(_ionic.SqlStorage);
+
+	      var qr = "CREATE TABLE IF NOT EXISTS person (type TEXT)";
+	      this.storage.query(qr).then(function (data) {
+	        qr = "SELECT * FROM person";
+	        _this.storage.query(qr).then(function (data) {
+	          if (data.res.rows.length == 0) {
+	            qr = "INSERT INTO person (type) VALUES('" + person + "')";
+	            _this.storage.query(qr).then(function (data) {
+	              //alert(JSON.stringify(data.res));
+	              _this.createAccount(person, details);
+	            }, function (error) {
+	              alert(JSON.stringify(error.err));
+	            });
+	          } else {
+	            alert('user session already present');
+	          }
+	        }, function (error) {
+	          console.log(error);
+	        });
+	      }, function (error) {
+	        alert(JSON.stringify(error.err));
+	      });
+	    }
+	  }, {
+	    key: 'getPerson',
+	    value: function getPerson() {
+	      this.storage = new _ionic.Storage(_ionic.SqlStorage);
+	      var qr = "SELECT * FROM person";
+	      this.storage.query(qr).then(function (data) {
+	        alert(data.res.rows.item(0).type);
+	      }, function (error) {
+	        alert(JSON.stringify(error.err));
+	      });
+	    }
+	  }, {
+	    key: 'islogged',
+	    value: function islogged() {
+	      this.storage = new _ionic.Storage(_ionic.SqlStorage);
+	      var qr = 'SELECT * FROM person';
+	      this.storage.query(qr).then(function (data) {
+	        if (data.res.rows.length > 0) {
+	          return 1;
+	        } else {
+	          return 0;
+	        }
+	      }, function (error) {
+	        alert(JSON.stringify(error.err));
+	      });
+	    }
+	  }, {
+	    key: 'createAccount',
+	    value: function createAccount(person, data) {
+	      var _this2 = this;
+
+	      this.storage = new _ionic.Storage(_ionic.SqlStorage);
+	      var qr = '';
+	      if (person == 'user') {
+	        qr = "CREATE TABLE IF NOT EXISTS user (email TEXT PRIMARY KEY,name TEXT,college TEXT,city TEXT,pass TEXT,phone TEXT)";
+	      } else if (person == 'shop') {
+	        qr = "CREATE TABLE IF NOT EXISTS shop (shopid TEXT PRIMARY KEY,name TEXT,city TEXT,email TEXT,lat INTEGER,lng INTEGER,pass TEXT,phone TEXT,fare INTEGER)";
+	      }
+	      this.storage.query(qr).then(function (data) {
+	        if (person == 'user') {
+	          qr = "INSERT INTO user (email,name,college,city,pass,phone) VALUES('" + data.email + "','" + data.name + "','" + data.college + "','" + data.city + "','" + data.pass + "','" + data.phone + "')";
+	        } else if (person == 'shop') {
+	          qr = "INSERT INTO shop (shopid,name,city,email,lat,lng,pass,phone,fare) VALUES('" + data.shopid + "','" + data.name + "','" + data.city + "','" + data.email + "','" + data.lat + "','" + data.lng + "','" + data.pass + "','" + data.phone + "','" + data.fare + "')";
+	        }
+	        _this2.storage.query(qr).then(function (data) {
+	          alert(JSON.stringify(data.res));
+	        }, function (error) {
+	          alert(JSON.stringify(error.err));
+	        });
+	      }, function (error) {
+	        console.log("ERROR -> " + JSON.stringify(error.err));
+	      });
+	    }
+	  }, {
+	    key: 'checkAccount',
+	    value: function checkAccount(person) {
+	      this.storage = new _ionic.Storage(_ionic.SqlStorage);
+	      var qr = 'SELECT * FROM ' + person;
+	      this.storage.query(qr).then(function (data) {
+	        console.log(data);
+	      }, function (error) {
+	        console.log(error);
+	      });
+	    }
+	  }, {
+	    key: 'newOrder',
+	    value: function newOrder() {
+	      this.storage = new _ionic.Storage(_ionic.SqlStorage);
+	      if (person == 'user') {
+	        quer = 'INSERT INTO orders (shopname , shopid ,pages ,amount ,date ,completion ) values ()';
+	      } else if (person == 'shop') {
+	        quer = 'INSERT INTO orders ( user , pages ,amount ,date ,completion )values()';
+	      }
+	    }
+	  }, {
+	    key: 'logout',
+	    value: function logout(person) {
+	      var _this3 = this;
+
+	      this.storage = new _ionic.Storage(_ionic.SqlStorage);
+	      var qr = "DROP TABLE IF EXISTS person";
+	      this.storage.query(qr).then(function (data) {
+	        qr = "DROP TABLE IF EXISTS " + person;
+	        _this3.storage.query(qr).then(function (data) {
+	          //alert(JSON.stringify(data.res));
+	          navigator.app.exitApp();
+	        }, function (error) {
+	          alert("ERROR -> " + JSON.stringify(error.err));
+	        });
 	      }, function (error) {
 	        console.log("ERROR -> " + JSON.stringify(error.err));
 	      });
@@ -62705,8 +62866,6 @@
 	});
 	exports.ShopselPage = undefined;
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _dec, _class;
@@ -62717,7 +62876,6 @@
 
 	/*
 	  Generated class for the ShopselPage page.
-
 	  See http://ionicframework.com/docs/v2/components/#navigation for more info on
 	  Ionic pages and navigation.
 	*/
@@ -62740,49 +62898,38 @@
 	    this.mapInitialised = false;
 	    this.marker = null;
 	    this.loadMap();
-	    this.listen();
-	    if (_typeof(cordova.plugins.settings.openSetting) != undefined) {
-	      cordova.plugins.settings.openSetting("location_source", function () {
-	        console.log("opened location_source settings");
-	      }, function () {
-	        console.log("failed to open location_source settings");
-	      });
-	    }
+	    this.shpArr;
+	    //if(typeof cordova.plugins.settings.openSetting != undefined)
+	    //{
+	    //cordova.plugins.settings.openSetting("location_source",
+	    // function(){console.log("opened location_source settings")},
+	    //function(){console.log("failed to open location_source settings")});
+	    //}
 	  }
 
 	  _createClass(ShopselPage, [{
-	    key: 'listen',
-	    value: function listen() {
+	    key: 'loadshops',
+	    value: function loadshops() {
 	      var _this = this;
 
-	      this.platform.ready().then(function () {
-	        var socket = io('http://print-yadunandan004.c9users.io:8080/');
-	        socket.on('mark_res', function (data) {
-	          console.log(data);
-	          var actionSheet = _ionic.ActionSheet.create({
-	            title: 'Modify your album',
-	            buttons: [{
-	              text: 'Destructive',
-	              role: 'destructive',
-	              handler: function handler() {
-	                console.log('Destructive clicked');
-	              }
-	            }, {
-	              text: 'Archive',
-	              handler: function handler() {
-	                console.log('Archive clicked');
-	              }
-	            }, {
-	              text: 'Cancel',
-	              role: 'cancel',
-	              handler: function handler() {
-	                console.log('Cancel clicked');
-	              }
-	            }]
-	          });
-
-	          _this.nav.present(actionSheet);
-	        });
+	      var url = 'https://print-yadunandan004.c9users.io:8080/shops/findshop';
+	      cordovaHTTP.post(url, {
+	        city: 'Bangalore',
+	        lat: this.lat,
+	        lng: this.lng
+	      }, { 'Content-type': 'application/json' }, function (response) {
+	        try {
+	          var resdat = JSON.parse(response.data);
+	          _this.shpArr = resdat.shops;
+	          //var navg=this.nav;
+	          for (var i = 0; i < _this.shpArr.length; i++) {
+	            var LatLng = { lat: _this.shpArr[i].lat, lng: _this.shpArr[i].lng };
+	            _this.addMarker(LatLng);
+	          }
+	          //alert(resdat.shops[0].name);
+	        } catch (e) {
+	          console.error("JSON parsing error");
+	        }
 	      });
 	    }
 	  }, {
@@ -62793,15 +62940,16 @@
 	      var options = { timeout: 10000, enableHighAccuracy: true };
 	      this.platform.ready().then(function () {
 	        navigator.geolocation.getCurrentPosition(function (position) {
+	          _this2.lat = position.coords.latitude;
+	          _this2.lng = position.coords.longitude;
 	          var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-
 	          var mapOptions = {
 	            center: latLng,
-	            zoom: 15,
+	            zoom: 16,
 	            mapTypeId: google.maps.MapTypeId.ROADMAP
 	          };
-
 	          _this2.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+	          _this2.loadshops();
 	        }, function (error) {
 	          console.log(error);
 	        }, options);
@@ -62809,17 +62957,50 @@
 	    }
 	  }, {
 	    key: 'addMarker',
-	    value: function addMarker() {
-
-	      this.marker = new google.maps.Marker({
+	    value: function addMarker(LatLng) {
+	      var navg = this.nav;
+	      var sarray = this.shpArr;
+	      var marker = new google.maps.Marker({
 	        map: this.map,
 	        animation: google.maps.Animation.DROP,
-	        position: this.map.getCenter()
+	        position: LatLng
 	      });
 
-	      this.marker.addListener('click', function () {
-	        var socket = io('http://print-yadunandan004.c9users.io:8080/');
-	        socket.emit('marker', 'add');
+	      var sname = '';
+	      var fare = '';
+	      marker.addListener('click', function () {
+
+	        for (var i = 0; i < sarray.length; i++) {
+	          alert(sarray[i].lat + '  ' + sarray[i].lng);
+	          if (this.position.lat().toFixed(7) == sarray[i].lat && this.position.lng().toFixed(7) == sarray[i].lng) {
+	            sname = sarray[i].name;
+	            fare = sarray[i].fare;
+	            //alert(sname);
+	          }
+	        }
+	        var actionSheet = _ionic.ActionSheet.create({
+	          title: sname,
+	          buttons: [{
+	            text: fare + ' Rs',
+	            role: 'destructive',
+	            handler: function handler() {
+	              console.log('Destructive clicked');
+	            }
+	          }, {
+	            text: 'Print',
+	            handler: function handler() {
+	              console.log('Archive clicked');
+	            }
+	          }, {
+	            text: 'Cancel',
+	            role: 'cancel',
+	            handler: function handler() {
+	              console.log('Cancel clicked');
+	            }
+	          }]
+	        });
+
+	        navg.present(actionSheet);
 	      });
 	    }
 	  }]);

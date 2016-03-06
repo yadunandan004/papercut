@@ -301,6 +301,14 @@ module.exports = [
         "clobbers": [
             "SQLitePlugin"
         ]
+    },
+    {
+        "file": "plugins/cordova-plugin-backbutton/www/Backbutton.js",
+        "id": "cordova-plugin-backbutton.Backbutton",
+        "pluginId": "cordova-plugin-backbutton",
+        "clobbers": [
+            "navigator.Backbutton"
+        ]
     }
 ];
 module.exports.metadata = 
