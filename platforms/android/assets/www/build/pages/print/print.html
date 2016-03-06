@@ -22,5 +22,10 @@
    
   </ion-card-content>
   </ion-card>
+    <ion-list>
+    <ion-item *ngFor="#order of orders" (click)="orderSelected(order)">
+      {{order.title}}
+    </ion-item>
+  </ion-list>
 </ion-content>
 <button (click)="selectFile()" fab fab-bottom fab-right><ion-icon name="add"></ion-icon></button>

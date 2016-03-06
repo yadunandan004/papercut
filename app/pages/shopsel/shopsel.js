@@ -21,13 +21,12 @@ export class ShopselPage {
     this.marker=null;
     this.loadMap();
     this.shpArr;
-    //if(typeof cordova.plugins.settings.openSetting != undefined)
-    //{
-    //cordova.plugins.settings.openSetting("location_source", 
-     // function(){console.log("opened location_source settings")},
-      //function(){console.log("failed to open location_source settings")});
-    //}
-
+    if(typeof cordova.plugins.settings.openSetting != undefined)
+    {
+    cordova.plugins.settings.openSetting("location_source", 
+      function(){console.log("opened location_source settings")},
+      function(){console.log("failed to open location_source settings")});
+    }
   }
 
   loadshops()

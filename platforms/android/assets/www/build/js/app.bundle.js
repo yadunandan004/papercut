@@ -62337,7 +62337,6 @@
 					this.nav = nav;
 					this.platform = platform;
 					this.profile = 'usr';
-					this.getcords();
 			}
 
 			_createClass(SignupPage, [{
@@ -62348,7 +62347,7 @@
 									this.adduser();
 							} else if (this.profile == 'shp') {
 									//alert('shop profile selected \n'+this.shoplat+'\n'+this.shoplng);
-									this.addshop();
+									this.getcords();
 							}
 					}
 			}, {
@@ -62416,6 +62415,7 @@
 									navigator.geolocation.getCurrentPosition(function (position) {
 											_this3.shoplat = position.coords.latitude;
 											_this3.shoplng = position.coords.longitude;
+											_this3.addshop();
 									}, function (error) {
 											console.log(error);
 									}, options);
@@ -62671,7 +62671,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	  value: true
 	});
 	exports.SelectFilePage = undefined;
 
@@ -62680,6 +62680,8 @@
 	var _dec, _class;
 
 	var _ionic = __webpack_require__(5);
+
+	var _userData = __webpack_require__(360);
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -62690,169 +62692,121 @@
 	  Ionic pages and navigation.
 	*/
 	var SelectFilePage = exports.SelectFilePage = (_dec = (0, _ionic.Page)({
-	    templateUrl: 'build/pages/select-file/select-file.html'
+	  templateUrl: 'build/pages/select-file/select-file.html',
+	  providers: [_userData.UserData]
 	}), _dec(_class = function () {
-	    _createClass(SelectFilePage, null, [{
-	        key: 'parameters',
-	        get: function get() {
-	            return [[_ionic.NavController], [_ionic.Platform]];
-	        }
-	    }]);
-
-	    function SelectFilePage(nav, platform) {
-	        _classCallCheck(this, SelectFilePage);
-
-	        this.nav = nav;
-	        this.platform = platform;
-	        this.file = "not selected";
-	        this.checked = false;
-	        this.name = "B/W";
+	  _createClass(SelectFilePage, null, [{
+	    key: 'parameters',
+	    get: function get() {
+	      return [[_ionic.NavController], [_ionic.Platform], [_userData.UserData]];
 	    }
+	  }]);
 
-	    _createClass(SelectFilePage, [{
-	        key: 'toggle',
-	        value: function toggle(event) {
-	            //alert(this.checked);
-	            if (this.checked === false) {
-	                this.name = "Colour";
-	            }
-	            if (this.checked === true) {
-	                this.name = "B/W";
-	            }
+	  function SelectFilePage(nav, platform, userData) {
+	    _classCallCheck(this, SelectFilePage);
+
+	    this.nav = nav;
+	    this.platform = platform;
+	    this.files = new Array();
+	    this.files.push('No files selected yet');
+	    this.userData = userData;
+	    this.name = "B/W";
+	  }
+
+	  _createClass(SelectFilePage, [{
+	    key: 'toggle',
+	    value: function toggle(event) {
+	      //alert(this.checked);
+	      if (this.checked === false) {
+	        this.name = "B/W";
+	        this.userData.file['option'] = "Color";
+	      }
+	      if (this.checked === true) {
+
+	        this.name = "Colour";
+	        this.userData.file['option'] = "B/W";
+	      }
+	    }
+	  }, {
+	    key: 'selectFile',
+	    value: function selectFile() {
+	      var _this = this;
+
+	      filechooser.open({}, function (data) {
+	        var filepath = data.filepath;
+	        _this.files.splice(0, 0, filepath);
+	      }, function (error) {
+	        alert(error);
+	      });
+	    }
+	  }, {
+	    key: 'takePhoto',
+	    value: function takePhoto() {
+	      var _this2 = this;
+
+	      this.platform.ready().then(function () {
+	        var options = {
+	          quality: 80,
+	          destinationType: Camera.DestinationType.FILE_URI,
+	          sourceType: Camera.PictureSourceType.CAMERA,
+	          allowEdit: false,
+	          encodingType: Camera.EncodingType.JPEG,
+	          saveToPhotoAlbum: true
+	        };
+	        // https://github.com/apache/cordova-plugin-camera#module_camera.getPicture
+	        navigator.camera.getPicture(function (data) {
+	          _this2.files.splice(0, 0, data);
+	        }, function (error) {
+	          alert(error);
+	        }, options);
+	      });
+	    }
+	  }, {
+	    key: 'upload',
+	    value: function upload() {
+
+	      for (var i = 0; i < this.files.length; i++) {
+	        this.uploadFile(this.files[i]);
+	      }
+	    }
+	  }, {
+	    key: 'uploadFile',
+	    value: function uploadFile(filepath) {
+	      //var filepath=data.filepath;
+	      function win(r) {
+	        console.log("Code = " + r.responseCode);
+	        console.log("Response = " + r.response);
+	        console.log("Sent = " + r.bytesSent);
+	        this.files.shift();
+	      }
+
+	      function fail(error) {
+	        console.log("An error has occurred: Code = " + error.code);
+	        console.log("upload error source " + error.source);
+	        console.log("upload error target " + error.target);
+	      }
+	      var uri = encodeURI("http://print-yadunandan004.c9users.io:8080/prints/addpage");
+	      var options = new FileUploadOptions();
+	      options.fileKey = "docs";
+	      options.fileName = filepath.substr(filepath.lastIndexOf('/') + 1);
+	      var params = {};
+	      params.user = "abdulla@gmail.com";
+	      options.params = params;
+
+	      var ft = new FileTransfer();
+	      ft.onprogress = function (progressEvent) {
+	        if (progressEvent.lengthComputable) {
+	          loadingStatus.setPercentage(progressEvent.loaded / progressEvent.total);
+	        } else {
+	          loadingStatus.increment();
 	        }
-	    }, {
-	        key: 'selectFile',
-	        value: function selectFile() {
-	            var success = function success(data) {
+	      };
 
-	                var filepath = data.filepath;
-	                function win(r) {
-	                    console.log("Code = " + r.responseCode);
-	                    console.log("Response = " + r.response);
-	                    console.log("Sent = " + r.bytesSent);
-	                }
+	      ft.upload(filepath, uri, win, fail, options);
+	    }
+	  }]);
 
-	                function fail(error) {
-	                    console.log("An error has occurred: Code = " + error.code);
-	                    console.log("upload error source " + error.source);
-	                    console.log("upload error target " + error.target);
-	                }
-	                var uri = encodeURI("http://print-yadunandan004.c9users.io:8080/prints/addpage");
-	                var options = new FileUploadOptions();
-	                options.fileKey = "docs";
-	                options.fileName = filepath.substr(filepath.lastIndexOf('/') + 1);
-	                var params = {};
-	                params.user = "abdulla@gmail.com";
-	                options.params = params;
-
-	                var ft = new FileTransfer();
-	                ft.onprogress = function (progressEvent) {
-	                    if (progressEvent.lengthComputable) {
-	                        loadingStatus.setPercentage(progressEvent.loaded / progressEvent.total);
-	                    } else {
-	                        loadingStatus.increment();
-	                    }
-	                };
-
-	                ft.upload(filepath, uri, win, fail, options);
-	            };
-
-	            var error = function error(msg) {
-	                console.log(msg);
-	            };
-
-	            filechooser.open({}, success, error);
-	        }
-	    }, {
-	        key: 'takePhoto',
-	        value: function takePhoto() {
-	            this.platform.ready().then(function () {
-	                var options = {
-	                    quality: 80,
-	                    destinationType: Camera.DestinationType.FILE_URI,
-	                    sourceType: Camera.PictureSourceType.CAMERA,
-	                    allowEdit: false,
-	                    encodingType: Camera.EncodingType.JPEG,
-	                    saveToPhotoAlbum: true
-	                };
-	                // https://github.com/apache/cordova-plugin-camera#module_camera.getPicture
-	                navigator.camera.getPicture(function (data) {
-	                    //var imagedata = "data:image/jpeg;base64," + data;
-	                    // this._zone.run(()=> this.images.unshift({
-	                    // src: imagedata
-	                    //}))
-	                    var filepath = data;
-	                    function win(r) {
-	                        console.log("Code = " + r.responseCode);
-	                        console.log("Response = " + r.response);
-	                        console.log("Sent = " + r.bytesSent);
-	                    }
-
-	                    function fail(error) {
-	                        console.log("An error has occurred: Code = " + error.code);
-	                        console.log("upload error source " + error.source);
-	                        console.log("upload error target " + error.target);
-	                    }
-	                    var uri = encodeURI("http://print-yadunandan004.c9users.io:8080/prints/addpage");
-	                    var options = new FileUploadOptions();
-	                    options.fileKey = "docs";
-	                    options.fileName = filepath.substr(filepath.lastIndexOf('/') + 1);
-	                    var params = {};
-	                    params.user = "abdulla@gmail.com";
-	                    options.params = params;
-
-	                    var ft = new FileTransfer();
-	                    ft.onprogress = function (progressEvent) {
-	                        if (progressEvent.lengthComputable) {
-	                            loadingStatus.setPercentage(progressEvent.loaded / progressEvent.total);
-	                        } else {
-	                            loadingStatus.increment();
-	                        }
-	                    };
-
-	                    ft.upload(filepath, uri, win, fail, options);
-	                }, function (error) {
-	                    alert(error);
-	                }, options);
-	            });
-	        }
-	    }, {
-	        key: 'uploadFile',
-	        value: function uploadFile(filepath) {
-	            //var filepath=data.filepath;
-	            function win(r) {
-	                console.log("Code = " + r.responseCode);
-	                console.log("Response = " + r.response);
-	                console.log("Sent = " + r.bytesSent);
-	            }
-
-	            function fail(error) {
-	                console.log("An error has occurred: Code = " + error.code);
-	                console.log("upload error source " + error.source);
-	                console.log("upload error target " + error.target);
-	            }
-	            var uri = encodeURI("http://print-yadunandan004.c9users.io:8080/prints/addpage");
-	            var options = new FileUploadOptions();
-	            options.fileKey = "docs";
-	            options.fileName = filepath.substr(filepath.lastIndexOf('/') + 1);
-	            var params = {};
-	            params.user = "abdulla@gmail.com";
-	            options.params = params;
-
-	            var ft = new FileTransfer();
-	            ft.onprogress = function (progressEvent) {
-	                if (progressEvent.lengthComputable) {
-	                    loadingStatus.setPercentage(progressEvent.loaded / progressEvent.total);
-	                } else {
-	                    loadingStatus.increment();
-	                }
-	            };
-
-	            ft.upload(filepath, uri, win, fail, options);
-	        }
-	    }]);
-
-	    return SelectFilePage;
+	  return SelectFilePage;
 	}()) || _class);
 
 /***/ },
@@ -62865,6 +62819,8 @@
 	  value: true
 	});
 	exports.ShopselPage = undefined;
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -62899,12 +62855,13 @@
 	    this.marker = null;
 	    this.loadMap();
 	    this.shpArr;
-	    //if(typeof cordova.plugins.settings.openSetting != undefined)
-	    //{
-	    //cordova.plugins.settings.openSetting("location_source",
-	    // function(){console.log("opened location_source settings")},
-	    //function(){console.log("failed to open location_source settings")});
-	    //}
+	    if (_typeof(cordova.plugins.settings.openSetting) != undefined) {
+	      cordova.plugins.settings.openSetting("location_source", function () {
+	        console.log("opened location_source settings");
+	      }, function () {
+	        console.log("failed to open location_source settings");
+	      });
+	    }
 	  }
 
 	  _createClass(ShopselPage, [{
@@ -62971,7 +62928,7 @@
 	      marker.addListener('click', function () {
 
 	        for (var i = 0; i < sarray.length; i++) {
-	          alert(sarray[i].lat + '  ' + sarray[i].lng);
+	          //alert(sarray[i].lat+'  '+sarray[i].lng);
 	          if (this.position.lat().toFixed(7) == sarray[i].lat && this.position.lng().toFixed(7) == sarray[i].lng) {
 	            sname = sarray[i].name;
 	            fare = sarray[i].fare;

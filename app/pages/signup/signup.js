@@ -17,7 +17,7 @@ export class SignupPage {
     this.nav = nav;
     this.platform=platform;
 		this.profile='usr';
-		this.getcords();
+		
   }
   	signup()
 	{
@@ -29,7 +29,8 @@ export class SignupPage {
 		else if (this.profile=='shp')
 		{
 			//alert('shop profile selected \n'+this.shoplat+'\n'+this.shoplng);
-			this.addshop();
+			this.getcords();
+
 
 		}
 	}
@@ -88,6 +89,7 @@ export class SignupPage {
 	 navigator.geolocation.getCurrentPosition((position)=>{
 	 	this.shoplat=position.coords.latitude;
 	 	this.shoplng=position.coords.longitude;
+	 	this.addshop();
 	 },(error)=>{
 	 		console.log(error);
 	 },options);
