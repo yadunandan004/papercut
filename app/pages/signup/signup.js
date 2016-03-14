@@ -1,4 +1,6 @@
 import {Page,NavController,Platform,Alert} from 'ionic-framework/ionic';
+import {UserData} from '../../providers/user-data/user-data';
+import {PrintPage} from '../print/print';
 
 /*
   Generated class for the SignupPage page.
@@ -8,13 +10,15 @@ import {Page,NavController,Platform,Alert} from 'ionic-framework/ionic';
 */
 @Page({
   templateUrl: 'build/pages/signup/signup.html',
+  providers:[UserData]
 })
 export class SignupPage {
   static get parameters() {
-    return [[NavController],[Platform]];
+    return [[NavController],[Platform],[UserData]];
   }
-  constructor(nav,platform) {
+  constructor(nav,platform,userData) {
     this.nav = nav;
+    this.userData=userData;
     this.platform=platform;
 		this.profile='usr';
 		
@@ -30,8 +34,6 @@ export class SignupPage {
 		{
 			//alert('shop profile selected \n'+this.shoplat+'\n'+this.shoplng);
 			this.getcords();
-
-
 		}
 	}
 	 adduser()
@@ -44,15 +46,26 @@ export class SignupPage {
     email: this.useremail,
     pass: this.pass,
     phone:this.phone
-    },{'Content-type' :  'application/json'},response=>{
+    },{'Content-type' :  'application/json'},(response)=>{
 		    try {
-		        
+		        var resdat=JSON.parse(response.data);
+		        if(resdat!=0){
 		        var alert = Alert.create({
 		                  title: 'Response',
-		                  subTitle: response.data,
+		                  subTitle: 'Signed in Successfully',
 		                  buttons: ['Dismiss']
 		                });
 		                this.nav.present(alert);
+		                this.userData.createPerson('user',resdat,(data)=>{
+				          if(data==1)
+				          {
+				            this.nav.push(PrintPage);
+				          }
+	        			});
+		            }
+		            else{
+		            	alert('Couldn\'t signup');
+		            }
 		    } catch(e) {
 		        console.error("JSON parsing error");
 		        }
@@ -69,15 +82,27 @@ export class SignupPage {
     lng:this.shoplng,
     pass: this.pass,
     phone:this.phone
-    },{'Content-type' :  'application/json'},response=>{
+    },{'Content-type' :  'application/json'},(response)=>{
 		    try {
-		        
+		        var resdat=JSON.parse(response.data);
+		        if(resdat!=0){
 		        var alert = Alert.create({
 		                  title: 'Response',
-		                  subTitle: response.data,
+		                  subTitle: 'Signed in Successfully',
 		                  buttons: ['Dismiss']
 		                });
 		                this.nav.present(alert);
+		                 this.userData.createPerson('shop',resdat,(data)=>{
+				          if(data==1)
+				          {			            
+				            this.nav.push(PrintPage);
+				          }
+        			});
+		           }
+		           else
+		           {
+		           	alert('couldn\'t signup');
+		           }
 		    } catch(e) {
 		        console.error("JSON parsing error");
 		        }

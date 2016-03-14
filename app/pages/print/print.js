@@ -1,4 +1,4 @@
-import {Page, NavController} from 'ionic-framework/ionic';
+import {Page, NavController,Platform,NavParams} from 'ionic-framework/ionic';
 import {SelectFilePage} from '../select-file/select-file';
 
 /*
@@ -13,12 +13,22 @@ import {SelectFilePage} from '../select-file/select-file';
 export class PrintPage {
   static get parameters()
   {
-    return [[NavController]];
+    return [[NavController],[Platform],[NavParams]];
   }
-  constructor(nav) {
+  constructor(nav,platform,navParams) {
     this.nav = nav;
+    this.platform=platform;
+    //this.orders.push(navParams.get('order'));
   }
   selectFile(event,item){
   	this.nav.push(SelectFilePage);
+  }
+
+  listen()
+  {
+    var socket=io('https://print-yadunandan004.c9users.io:8080');
+    socket.on('new_order',(data)=>{
+
+    });
   }
 }

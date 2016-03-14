@@ -1,7 +1,9 @@
 import {Page,NavController,NavParams,Alert,Platform} from 'ionic-framework/ionic';
 import {Inject} from 'angular2/core';
 import {SignupPage} from '../signup/signup';
+import {PrintPage} from '../print/print';
 import {UserData} from '../../providers/user-data/user-data';
+
 //import {UserData} from '../../providers/user-data/user-data';
 /*
   Generated class for the LoginPage page.
@@ -19,7 +21,7 @@ export class LoginPage {
     return [[NavController],[NavParams],[Platform],[UserData]];
   }
   constructor(nav,navParams,platform,userData) {
-  		this.nav = nav;
+  		this.nav= nav;
       this.userData=userData;
       this.platform=platform;
       this.listen();   
@@ -43,9 +45,6 @@ export class LoginPage {
     signup(event, item) {
      this.nav.push(SignupPage);
     }
-  	print(event,item){
-  		//this.nav.push(PrintPage);
-  	}
       logger()
     {
       var url = 'https://print-yadunandan004.c9users.io:8080/users/readuser';
@@ -55,7 +54,14 @@ export class LoginPage {
     },{'Content-type' :  'application/json'},response=>{
     try {
         var resdat=JSON.parse(response.data);
-        this.userData.createPerson('user',resdat);
+        
+        this.userData.createPerson('user',resdat,(data)=>{
+          if(data==1)
+          {
+            
+            this.nav.push(PrintPage);
+          }
+        });
 
         } catch(e) {
         console.error("JSON parsing error");

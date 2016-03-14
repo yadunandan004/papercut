@@ -24,7 +24,19 @@
   </ion-card>
     <ion-list>
     <ion-item *ngFor="#order of orders" (click)="orderSelected(order)">
-      {{order.title}}
+    <ion-card>
+
+      <ion-card-header>
+        {{order._id}}
+      </ion-card-header>
+
+      <ion-card-content>
+        <!-- Add card content here! -->
+        {{JSON.stringify(order.src)}}
+      </ion-card-content>
+
+    </ion-card>
+
     </ion-item>
   </ion-list>
 </ion-content>

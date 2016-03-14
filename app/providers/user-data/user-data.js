@@ -1,6 +1,7 @@
 import {Injectable} from 'angular2/core';
 import {Storage, SqlStorage,LocalStorage,Platform} from 'ionic-framework/ionic'; 
 
+
 /*
   Generated class for the UserData provider.
 
@@ -14,28 +15,37 @@ static get parameters() {
   }
   constructor(platform) {
     this.platform=platform;
-    this.user='yadu'; 
+    this.user='yadu';
+    this.orders=new Array();
   }
-
+  saveOrder(order)
+  {
+    this.orders.push(order);
+    alert(this.orders[0].name);
+  }
+  getOrder()
+  {
+    return this.orders[0];
+  }
   initStorage(person)
   { 
     this.storage = new Storage(SqlStorage);
     var quer='';
        if(person=='user')
        { 
-        quer='CREATE TABLE IF NOT EXISTS orders (id INTEGER PRIMARY KEY AUTOINCREMENT, shopname TEXT, shopid TEXT,pages TEXT,amount INTEGER,date TEXT,completion INTEGER)';
+        quer='CREATE TABLE IF NOT EXISTS orders (orderid TEXT PRIMARY KEY ,shopid TEXT,pages TEXT,completion INTEGER,date TEXT)';
        }
        else if(person=='shop')
        {
-        quer='CREATE TABLE IF NOT EXISTS orders (id INTEGER PRIMARY KEY AUTOINCREMENT, user TEXT, pages TEXT,amount INTEGER,date TEXT,completion INTEGER)';
+        quer='CREATE TABLE IF NOT EXISTS orders (orderid TEXT PRIMARY KEY , user TEXT, pages TEXT,completion INTEGER,date TEXT)';
        } 
             this.storage.query(quer).then((data) => {
-                console.log("TABLE CREATED -> " + JSON.stringify(data.res));
+                alert("TABLE CREATED -> " + JSON.stringify(data.res));
           }, (error) => {
                 console.log("ERROR -> " + JSON.stringify(error.err));
         });
   }
-  createPerson(person,details)
+  createPerson(person,details,fn)
   {
     this.storage = new Storage(SqlStorage);
     
@@ -48,7 +58,10 @@ static get parameters() {
         qr="INSERT INTO person (type) VALUES('"+person+"')";
         this.storage.query(qr).then((data)=>{
           //alert(JSON.stringify(data.res));
-           this.createAccount(person,details);
+
+            this.createAccount(person,details,(data)=>{
+              fn(data);
+            });
         },(error)=>{
           alert(JSON.stringify(error.err));
         });
@@ -96,7 +109,7 @@ static get parameters() {
         alert(JSON.stringify(error.err));
     });
   }
-  createAccount(person,data)
+  createAccount(person,data,fn)
   {
     this.storage = new Storage(SqlStorage);
     var qr='';
@@ -118,7 +131,7 @@ static get parameters() {
         qr="INSERT INTO shop (shopid,name,city,email,lat,lng,pass,phone,fare) VALUES('"+data.shopid+"','"+data.name+"','"+data.city+"','"+data.email+"','"+data.lat+"','"+data.lng+"','"+data.pass+"','"+data.phone+"','"+data.fare+"')";
       }
       this.storage.query(qr).then((data)=>{
-        alert(JSON.stringify(data.res));
+          fn(1);
       },(error)=>{
         alert(JSON.stringify(error.err));
       });
@@ -137,17 +150,30 @@ static get parameters() {
       console.log(error);
     });
   }
-  newOrder()
+  newOrder(person,order)
   {
     this.storage = new Storage(SqlStorage);
+    var src=this.convertArraytoString(order.src);
+    var quer='';
+    var completion=0;
+    if(order.completed=='true')
+    {
+      completion=1;
+    }
     if(person=='user')
        { 
-        quer='INSERT INTO orders (shopname , shopid ,pages ,amount ,date ,completion ) values ()';
+        quer="INSERT INTO orders (orderid,shopid ,pages,completion,date ) VALUES('"+order._id+"','"+order.shopid+"','"+src+"','"+completion+"','"+order.date.toString()+"')";
+        //alert(src+'\n'+order.date.toString());
        }
        else if(person=='shop')
        {
-        quer='INSERT INTO orders ( user , pages ,amount ,date ,completion )values()';
-       } 
+        quer="INSERT INTO orders (orderid, user , pages ,completion,date)VALUES('"+order._id+"','"+order.user+"','"+src+"','"+completion+"','"+order.date.toString()+"')";
+       }
+       this.storage.query(quer).then((data)=>{
+          alert('new order added');
+       },(error)=>{
+          alert('error for order');
+       });
   }
   logout(person)
   { 
@@ -164,6 +190,19 @@ static get parameters() {
     },(error)=>{
       console.log("ERROR -> " + JSON.stringify(error.err));
     }); 
-  }  
+  }
+  convertArraytoString(array)
+  {
+    var Str='';
+    for(var i=0;i<array.length;i++)
+    {
+      Str=Str+JSON.stringify(array[i]);
+    }
+    return Str;
+  } 
+  convertStringtoArray()
+  {
+
+  } 
 }
 

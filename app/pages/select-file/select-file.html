@@ -29,7 +29,7 @@
   <ion-list>
  <ion-item-divider light>Files</ion-item-divider>
   <ion-item *ngFor="#file of files">
-    {{file}}
+    {{file.name}}
   </ion-item>
 </ion-list>
   <button danger block (click)="upload()">Order</button>

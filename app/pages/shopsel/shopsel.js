@@ -1,5 +1,6 @@
-import {Page,Platform, NavController,ActionSheet} from 'ionic-framework/ionic';
-
+import {Page,Platform, NavController,ActionSheet,NavParams,Alert} from 'ionic-framework/ionic';
+import {UserData} from '../../providers/user-data/user-data';
+import {PrintPage} from '../print/print';
 /*
   Generated class for the ShopselPage page.
   See http://ionicframework.com/docs/v2/components/#navigation for more info on
@@ -7,19 +8,22 @@ import {Page,Platform, NavController,ActionSheet} from 'ionic-framework/ionic';
 */
 @Page({
   templateUrl: 'build/pages/shopsel/shopsel.html',
+  providers:[UserData]
 })
 export class ShopselPage {
   static get parameters()
   {
-    return [[NavController],[Platform]];
+    return [[NavController],[Platform],[UserData],[NavParams]];
   }
-  constructor(nav,platform) {
+  constructor(nav,platform,userData,navParams) {
     this.nav = nav;
+    this.userData=userData;
      this.platform = platform;
     this.map = null;
     this.mapInitialised = false;  
     this.marker=null;
     this.loadMap();
+    this.files=navParams.get('src');
     this.shpArr;
     if(typeof cordova.plugins.settings.openSetting != undefined)
     {
@@ -84,9 +88,11 @@ addMarker(LatLng){
     animation: google.maps.Animation.DROP,
     position: LatLng
   });
- 
+    var files=this.files;
     var sname='';
     var fare='';
+    var shop={};
+    var that=this;
     marker.addListener('click',function(){
 
       for(var i=0;i<sarray.length;i++)
@@ -96,6 +102,7 @@ addMarker(LatLng){
         {
           sname=sarray[i].name;
           fare=sarray[i].fare;
+          shop=sarray[i];
           //alert(sname);
         }
       }
@@ -103,16 +110,27 @@ addMarker(LatLng){
       title: sname,
       buttons: [
         {
-          text: fare+' Rs',
-          role: 'destructive',
-          handler: () => {
-            console.log('Destructive clicked');
-          }
-        },
-        {
           text: 'Print',
           handler: () => {
-            console.log('Archive clicked');
+            //alert(sname);
+            //that.sendOrder(shop,files,navg);
+            var url="https://print-yadunandan004.c9users.io:8080/orders/neworder";
+            cordovaHTTP.post(url,{
+              shopid:shop.shopid,
+              user:'abdulla@gmail.com',
+              src:files
+            },{'Content-type' :  'application/json'},(response)=>{
+            var resdat=JSON.parse(response.data);
+            that.userData.newOrder('user',resdat,(data)=>{
+              if(data==1)
+              {
+                //alert('addeed');
+                that.nav.push(PrintPage,{order:resdat});
+              }
+            });
+            },(error)=>{
+              alert(error);
+            });
           }
         },
         {
@@ -129,4 +147,27 @@ addMarker(LatLng){
     });
 
 }
+  sendOrder(shop,files,nav)
+  {
+     
+     var prompt = Alert.create({
+      title: 'Order',
+      message: "Are you sure?",
+      buttons: [
+        {
+          text: 'Cancel',
+          handler: data => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Save',
+          handler: (data) => {
+
+          }
+        }
+      ]
+    });
+     nav.present(prompt);
+  }
 }

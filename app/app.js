@@ -26,9 +26,10 @@ export class MyApp {
       { title: 'Print Page',component:PrintPage},
       {title:'Shop Selection',component:ShopselPage}
       ];
-
+      
     this.rootPage = LoginPage;
     this.platform.ready().then(() => {
+      this.userData.initStorage('user');
       // The platform is now ready. Note: if this callback fails to fire, follow
       // the Troubleshooting guide for a number of possible solutions:
       //

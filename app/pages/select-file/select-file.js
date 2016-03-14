@@ -1,5 +1,6 @@
-import {Page, NavController,Platform} from 'ionic-framework/ionic';
+import {Page, NavController,Platform,Alert} from 'ionic-framework/ionic';
 import {UserData} from '../../providers/user-data/user-data';
+import {ShopselPage} from '../shopsel/shopsel';
 /*
   Generated class for the SelectFilePage page.
 
@@ -18,10 +19,11 @@ export class SelectFilePage {
   constructor(nav,platform,userData) {
     this.nav = nav;
     this.platform=platform;
-    this.files=new Array();
-    this.files.push('No files selected yet');
+    this.files=new Array(); //file path, Name,option,copy
+    this.supload=0;
     this.userData=userData;
     this.name="B/W";
+    this.totalFiles=0;
   }
   toggle(event)
   {
@@ -39,11 +41,18 @@ export class SelectFilePage {
     }
   }
   selectFile()
-  {
-     
+  {    
      filechooser.open({},(data)=>{
+        var file=new Object();
+        file.path='';
+        file.name='';
+        file.copies=1;
+        file.option='B/W';
        var filepath=data.filepath;
-        this.files.splice(0,0,filepath);
+        this.totalFiles++;
+        file.path=filepath;
+        file.name=filepath.substr(filepath.lastIndexOf('/')+1);
+        this.files.splice(0,0,file);
      },(error)=>{
       alert(error);
      }); 
@@ -61,7 +70,15 @@ export class SelectFilePage {
       // https://github.com/apache/cordova-plugin-camera#module_camera.getPicture
       navigator.camera.getPicture(
         (data) => {
-        this.files.splice(0,0,data);
+          var file=new Object();
+        file.path='';
+        file.name='';
+        file.copies=1;
+        file.option='B/W';
+        this.totalFiles++;
+        file.path=data;
+        file.name=data.substr(data.lastIndexOf('/')+1);
+        this.files.splice(0,0,file);
         }, (error) => {
           alert(error);
         }, options
@@ -70,13 +87,27 @@ export class SelectFilePage {
   }
   upload()
   {
-    
-    for(var i=0;i<this.files.length;i++)
+    if(this.totalFiles>0)
     {
-      this.uploadFile(this.files[i]);
+      for(var i=0;i<this.files.length;i++)
+      {
+        this.uploadFile(this.files[i].path,this.files[i].name);
+      }
+      
+        this.nav.push(ShopselPage,{src:this.files});
+    }
+    else
+    {
+       var alert = Alert.create({
+      title: 'Can\'t Upload!',
+      subTitle: 'You haven\'t selected any file!!',
+      buttons: ['Ok']
+      });
+      this.nav.present(alert);
     }
   }
-  uploadFile(filepath)
+
+  uploadFile(filepath,filename)
   {
     //var filepath=data.filepath;
         function win(r) {
@@ -84,6 +115,7 @@ export class SelectFilePage {
             console.log("Response = " + r.response);
             console.log("Sent = " + r.bytesSent);
             this.files.shift();
+            this.supload++;
         }
 
         function fail(error) {
@@ -94,7 +126,7 @@ export class SelectFilePage {
         var uri = encodeURI("http://print-yadunandan004.c9users.io:8080/prints/addpage");
         var options = new FileUploadOptions();
         options.fileKey="docs";
-        options.fileName=filepath.substr(filepath.lastIndexOf('/')+1);
+        options.fileName=filename;
         var params = {};
         params.user = "abdulla@gmail.com";
         options.params=params;
