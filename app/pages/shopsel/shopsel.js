@@ -71,6 +71,11 @@ export class ShopselPage {
               mapTypeId: google.maps.MapTypeId.ROADMAP
           } 
           this.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+          var marker = new google.maps.Marker({
+          map: this.map,
+          animation: google.maps.Animation.DROP,
+          position: latLng
+        });
           this.loadshops();
       },
       (error) => {
@@ -125,7 +130,7 @@ addMarker(LatLng){
               if(data==1)
               {
                 //alert('addeed');
-                that.nav.push(PrintPage,{order:resdat});
+                that.nav.push(PrintPage);
               }
             });
             },(error)=>{
