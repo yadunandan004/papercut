@@ -39,6 +39,9 @@
         },
         "cordova-plugin-backbutton": {
             "PACKAGE_NAME": "io.ionic.starter"
+        },
+        "cordova-plugin-fastrde-checkgps": {
+            "PACKAGE_NAME": "io.ionic.starter"
         }
     },
     "dependent_plugins": {}

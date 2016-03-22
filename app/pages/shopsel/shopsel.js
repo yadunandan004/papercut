@@ -18,19 +18,28 @@ export class ShopselPage {
   constructor(nav,platform,userData,navParams) {
     this.nav = nav;
     this.userData=userData;
-     this.platform = platform;
+    this.platform = platform;
     this.map = null;
     this.mapInitialised = false;  
     this.marker=null;
     this.loadMap();
     this.files=navParams.get('src');
     this.shpArr;
-    if(typeof cordova.plugins.settings.openSetting != undefined)
-    {
-    cordova.plugins.settings.openSetting("location_source", 
-      function(){console.log("opened location_source settings")},
-      function(){console.log("failed to open location_source settings")});
-    }
+    CheckGPS.check(function(){
+    //GPS is enabled!
+
+    },
+    function(){
+      //GPS is disabled!
+      if(typeof cordova.plugins.settings.openSetting != undefined)
+      {
+      cordova.plugins.settings.openSetting("location_source", 
+        function(){console.log("opened location_source settings")},
+        function(){console.log("failed to open location_source settings")});
+      }
+
+    });
+    
   }
 
   loadshops()
@@ -44,13 +53,11 @@ export class ShopselPage {
     try {
         var resdat=JSON.parse(response.data);
         this.shpArr=resdat.shops;
-         //var navg=this.nav;
         for(var i=0;i<this.shpArr.length;i++)
         {
          var LatLng={lat:this.shpArr[i].lat,lng:this.shpArr[i].lng};
           this.addMarker(LatLng);   
         }
-        //alert(resdat.shops[0].name);
         } catch(e) {
         console.error("JSON parsing error");
         }
@@ -111,30 +118,24 @@ addMarker(LatLng){
           //alert(sname);
         }
       }
+        that.presentdtls(sname,fare,shop);
+    });
+
+}
+  
+  presentdtls(sname,fare,shop)
+  {
       var actionSheet = ActionSheet.create({
       title: sname,
       buttons: [
         {
           text: 'Print',
+          role: 'destructive',
           handler: () => {
-            //alert(sname);
-            //that.sendOrder(shop,files,navg);
-            var url="https://print-yadunandan004.c9users.io:8080/orders/neworder";
-            cordovaHTTP.post(url,{
-              shopid:shop.shopid,
-              user:'abdulla@gmail.com',
-              src:files
-            },{'Content-type' :  'application/json'},(response)=>{
-            var resdat=JSON.parse(response.data);
-            that.userData.newOrder('user',resdat,(data)=>{
-              if(data==1)
-              {
-                //alert('addeed');
-                that.nav.push(PrintPage);
-              }
-            });
-            },(error)=>{
-              alert(error);
+            this.userData.getAccountDetails('user',(data)=>{
+              this.sendFile(data.email,shop);
+            },(err)=>{
+              alert(err);
             });
           }
         },
@@ -148,10 +149,8 @@ addMarker(LatLng){
       ]
     });
 
-    navg.present(actionSheet);
-    });
-
-}
+    this.nav.present(actionSheet);
+  }
   sendOrder(shop,files,nav)
   {
      
@@ -168,11 +167,29 @@ addMarker(LatLng){
         {
           text: 'Save',
           handler: (data) => {
-
           }
         }
       ]
     });
      nav.present(prompt);
+  }
+  sendFile(email,shop)
+  {
+    var url="https://print-yadunandan004.c9users.io:8080/orders/neworder";
+            cordovaHTTP.post(url,{
+              shopid:shop.shopid,
+              user:email,
+              src:this.files
+            },{'Content-type' :  'application/json'},(response)=>{
+            var resdat=JSON.parse(response.data);
+            this.userData.newOrder('user',resdat,(data)=>{
+              if(data==1)
+              {
+                this.nav.setRoot(PrintPage,{msg:resdat});
+              }
+            });
+            },(error)=>{
+              alert(error);
+            });
   }
 }

@@ -22,26 +22,10 @@ export class LoginPage {
   }
   constructor(nav,navParams,platform,userData) {
   		this.nav= nav;
-      this.userData=userData;
+      this.userData=userData;             
       this.platform=platform;
-      this.listen();   
+      this.checkConnection(); 
   }
-  	listen()
-    {
-      this.platform.ready().then(() => {
-        var socket=io('http://print-yadunandan004.c9users.io:8080/');
-        socket.on('test_msg',(data)=>{
-          console.log(data);
-          var alert = Alert.create({
-                  title: 'Response',
-                  subTitle: data,
-                  buttons: ['Dismiss']
-                });
-              
-                this.nav.present(alert);
-        });
-      });
-    }
     signup(event, item) {
      this.nav.push(SignupPage);
     }
@@ -54,12 +38,10 @@ export class LoginPage {
     },{'Content-type' :  'application/json'},response=>{
     try {
         var resdat=JSON.parse(response.data);
-        
-        this.userData.createPerson('user',resdat,(data)=>{
+        this.userData.createPerson(resdat,(data)=>{
           if(data==1)
-          {
-            
-            this.nav.push(PrintPage);
+          {            
+            this.nav.setRoot(PrintPage,{data:resdat}); 
           }
         });
 
@@ -69,13 +51,21 @@ export class LoginPage {
       });
     }
 
-        alerter()
-        {
-          var alert = Alert.create({
-                  title: 'Response',
-                  subTitle: 'response',
-                  buttons: ['Dismiss']
-                });
-                this.nav.present(alert);
-        }  
+    alerter()
+    {
+      var alert = Alert.create({
+              title: 'Response',
+              subTitle: 'response',
+              buttons: ['Dismiss']
+            });
+            this.nav.present(alert);
+    }
+    checkConnection()
+    {
+       var networkState = navigator.connection.type;
+       if(networkState=='none')
+       {
+          alert('please enable network connection');
+       }
+    } 
 }

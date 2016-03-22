@@ -36,6 +36,9 @@
     <feature name="BackbuttonPlugin">
         <param name="android-package" value="com.badrit.Backbutton.BackbuttonPlugin" />
     </feature>
+    <feature name="CheckGPS">
+        <param name="android-package" value="de.fastr.phonegap.plugins.CheckGPS" />
+    </feature>
     <allow-intent href="market:*" />
     <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
     <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png" />

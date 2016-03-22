@@ -8,7 +8,7 @@
   <button menuToggle>
     <ion-icon name="menu"></ion-icon>
   </button>
-  <ion-title>Login Page</ion-title>
+  <ion-title>{{title}}</ion-title>
 </ion-navbar>
 
 <ion-content padding class="print">
@@ -40,4 +40,4 @@
     </ion-item>
   </ion-list>
 </ion-content>
-<button (click)="selectFile()" fab fab-bottom fab-right><ion-icon name="add"></ion-icon></button>
+<button [hidden]="person=='shop'" (click)="selectFile()" fab fab-bottom fab-right ><ion-icon name="add"></ion-icon></button>

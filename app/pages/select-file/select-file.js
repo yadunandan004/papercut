@@ -1,6 +1,7 @@
 import {Page, NavController,Platform,Alert} from 'ionic-framework/ionic';
 import {UserData} from '../../providers/user-data/user-data';
 import {ShopselPage} from '../shopsel/shopsel';
+import {PrintPage} from '../print/print';
 /*
   Generated class for the SelectFilePage page.
 
@@ -24,6 +25,11 @@ export class SelectFilePage {
     this.userData=userData;
     this.name="B/W";
     this.totalFiles=0;
+    this.userData.getAccountDetails('user',(data)=>{
+    this.uemail=data.email;
+    },(err)=>{
+      alert(err);
+    });
   }
   toggle(event)
   {
@@ -52,7 +58,8 @@ export class SelectFilePage {
         this.totalFiles++;
         file.path=filepath;
         file.name=filepath.substr(filepath.lastIndexOf('/')+1);
-        this.files.splice(0,0,file);
+        this.files.push(file);
+
      },(error)=>{
       alert(error);
      }); 
@@ -78,7 +85,7 @@ export class SelectFilePage {
         this.totalFiles++;
         file.path=data;
         file.name=data.substr(data.lastIndexOf('/')+1);
-        this.files.splice(0,0,file);
+        this.files.push(file);
         }, (error) => {
           alert(error);
         }, options
@@ -128,7 +135,7 @@ export class SelectFilePage {
         options.fileKey="docs";
         options.fileName=filename;
         var params = {};
-        params.user = "abdulla@gmail.com";
+        params.user = this.uemail;
         options.params=params;
 
         var ft = new FileTransfer();
@@ -143,5 +150,4 @@ export class SelectFilePage {
 
         ft.upload(filepath, uri, win, fail, options); 
   }
-
 }

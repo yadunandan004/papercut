@@ -1,4 +1,4 @@
-import {App,IonicApp, Platform,Alert} from 'ionic-framework/ionic';
+import {App,IonicApp, Platform,Alert,Config} from 'ionic-framework/ionic';
 import {LoginPage} from './pages/login/login';
 import {PrintPage} from './pages/print/print';
 import {ShopselPage} from './pages/shopsel/shopsel';
@@ -17,19 +17,38 @@ export class MyApp {
   
   constructor(platform,app,userData) {
      this.app = app;
+
     this.platform = platform;
     this.userData=userData;
-    //this.nav=nav;
     
     this.pages = [
       { title: 'Login Page', component: LoginPage },
       { title: 'Print Page',component:PrintPage},
       {title:'Shop Selection',component:ShopselPage}
       ];
-      
-    this.rootPage = LoginPage;
+   
+      this.rootPage = LoginPage;
+    
+    
     this.platform.ready().then(() => {
-      this.userData.initStorage('user');
+
+              
+               this.userData.getPerson((data)=>{
+                    if(typeof(data)!=='undefined')
+                    {
+                      var nav=this.app.getComponent('nav');
+                      nav.setRoot(PrintPage);
+                    }
+                },(err)=>{
+                  if(err==1)
+                  {
+                  this.userData.initStorage('user',(res)=>{
+                      //alert('table created');
+                      });
+                  }
+                });
+              
+            
       // The platform is now ready. Note: if this callback fails to fire, follow
       // the Troubleshooting guide for a number of possible solutions:
       //

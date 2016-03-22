@@ -3218,15 +3218,29 @@
 	    _classCallCheck(this, MyApp);
 
 	    this.app = app;
+
 	    this.platform = platform;
 	    this.userData = userData;
-	    //this.nav=nav;
 
 	    this.pages = [{ title: 'Login Page', component: _login.LoginPage }, { title: 'Print Page', component: _print.PrintPage }, { title: 'Shop Selection', component: _shopsel.ShopselPage }];
 
 	    this.rootPage = _login.LoginPage;
+
 	    this.platform.ready().then(function () {
-	      _this.userData.initStorage('user');
+
+	      _this.userData.getPerson(function (data) {
+	        if (typeof data !== 'undefined') {
+	          var nav = _this.app.getComponent('nav');
+	          nav.setRoot(_print.PrintPage);
+	        }
+	      }, function (err) {
+	        if (err == 1) {
+	          _this.userData.initStorage('user', function (res) {
+	            //alert('table created');
+	          });
+	        }
+	      });
+
 	      // The platform is now ready. Note: if this callback fails to fire, follow
 	      // the Troubleshooting guide for a number of possible solutions:
 	      //
@@ -62236,29 +62250,10 @@
 	    this.nav = nav;
 	    this.userData = userData;
 	    this.platform = platform;
-	    this.listen();
+	    this.checkConnection();
 	  }
 
 	  _createClass(LoginPage, [{
-	    key: 'listen',
-	    value: function listen() {
-	      var _this = this;
-
-	      this.platform.ready().then(function () {
-	        var socket = io('http://print-yadunandan004.c9users.io:8080/');
-	        socket.on('test_msg', function (data) {
-	          console.log(data);
-	          var alert = _ionic.Alert.create({
-	            title: 'Response',
-	            subTitle: data,
-	            buttons: ['Dismiss']
-	          });
-
-	          _this.nav.present(alert);
-	        });
-	      });
-	    }
-	  }, {
 	    key: 'signup',
 	    value: function signup(event, item) {
 	      this.nav.push(_signup.SignupPage);
@@ -62266,7 +62261,7 @@
 	  }, {
 	    key: 'logger',
 	    value: function logger() {
-	      var _this2 = this;
+	      var _this = this;
 
 	      var url = 'https://print-yadunandan004.c9users.io:8080/users/readuser';
 	      cordovaHTTP.post(url, {
@@ -62275,11 +62270,9 @@
 	      }, { 'Content-type': 'application/json' }, function (response) {
 	        try {
 	          var resdat = JSON.parse(response.data);
-
-	          _this2.userData.createPerson('user', resdat, function (data) {
+	          _this.userData.createPerson(resdat, function (data) {
 	            if (data == 1) {
-
-	              _this2.nav.push(_print.PrintPage);
+	              _this.nav.setRoot(_print.PrintPage, { data: resdat });
 	            }
 	          });
 	        } catch (e) {
@@ -62296,6 +62289,14 @@
 	        buttons: ['Dismiss']
 	      });
 	      this.nav.present(alert);
+	    }
+	  }, {
+	    key: 'checkConnection',
+	    value: function checkConnection() {
+	      var networkState = navigator.connection.type;
+	      if (networkState == 'none') {
+	        alert('please enable network connection');
+	      }
 	    }
 	  }]);
 
@@ -62512,7 +62513,7 @@
 	    }
 	  }, {
 	    key: 'initStorage',
-	    value: function initStorage(person) {
+	    value: function initStorage(person, fn) {
 	      this.storage = new _ionic.Storage(_ionic.SqlStorage);
 	      var quer = '';
 	      if (person == 'user') {
@@ -62521,32 +62522,30 @@
 	        quer = 'CREATE TABLE IF NOT EXISTS orders (orderid TEXT PRIMARY KEY , user TEXT, pages TEXT,completion INTEGER,date TEXT)';
 	      }
 	      this.storage.query(quer).then(function (data) {
-	        alert("TABLE CREATED -> " + JSON.stringify(data.res));
+	        fn(1);
+	        // alert("TABLE CREATED -> " + JSON.stringify(data.res));
 	      }, function (error) {
 	        console.log("ERROR -> " + JSON.stringify(error.err));
 	      });
 	    }
 	  }, {
 	    key: 'createPerson',
-	    value: function createPerson(person, details, fn) {
+	    value: function createPerson(details, fn) {
 	      var _this = this;
 
 	      this.storage = new _ionic.Storage(_ionic.SqlStorage);
-
 	      var qr = "CREATE TABLE IF NOT EXISTS person (type TEXT)";
 	      this.storage.query(qr).then(function (data) {
 	        qr = "SELECT * FROM person";
 	        _this.storage.query(qr).then(function (data) {
 	          if (data.res.rows.length == 0) {
-	            qr = "INSERT INTO person (type) VALUES('" + person + "')";
+	            qr = "INSERT INTO person (type) VALUES('" + details.type + "')";
 	            _this.storage.query(qr).then(function (data) {
-	              //alert(JSON.stringify(data.res));
-
-	              _this.createAccount(person, details, function (data) {
+	              _this.createAccount(details, function (data) {
 	                fn(data);
 	              });
 	            }, function (error) {
-	              alert(JSON.stringify(error.err));
+	              alert(JSON.stringify(error.err) + ' from device');
 	            });
 	          } else {
 	            alert('user session already present');
@@ -62560,13 +62559,14 @@
 	    }
 	  }, {
 	    key: 'getPerson',
-	    value: function getPerson() {
+	    value: function getPerson(fn, er) {
 	      this.storage = new _ionic.Storage(_ionic.SqlStorage);
 	      var qr = "SELECT * FROM person";
 	      this.storage.query(qr).then(function (data) {
-	        alert(data.res.rows.item(0).type);
+	        fn(data.res.rows.item(0).type);
 	      }, function (error) {
-	        alert(JSON.stringify(error.err));
+	        //console.log(JSON.stringify(error.err))
+	        er(1);
 	      });
 	    }
 	  }, {
@@ -62586,29 +62586,41 @@
 	    }
 	  }, {
 	    key: 'createAccount',
-	    value: function createAccount(person, data, fn) {
+	    value: function createAccount(data, fn) {
 	      var _this2 = this;
 
 	      this.storage = new _ionic.Storage(_ionic.SqlStorage);
+	      var person = data.type;
 	      var qr = '';
 	      if (person == 'user') {
 	        qr = "CREATE TABLE IF NOT EXISTS user (email TEXT PRIMARY KEY,name TEXT,college TEXT,city TEXT,pass TEXT,phone TEXT)";
 	      } else if (person == 'shop') {
 	        qr = "CREATE TABLE IF NOT EXISTS shop (shopid TEXT PRIMARY KEY,name TEXT,city TEXT,email TEXT,lat INTEGER,lng INTEGER,pass TEXT,phone TEXT,fare INTEGER)";
 	      }
-	      this.storage.query(qr).then(function (data) {
+	      this.storage.query(qr).then(function (res) {
 	        if (person == 'user') {
 	          qr = "INSERT INTO user (email,name,college,city,pass,phone) VALUES('" + data.email + "','" + data.name + "','" + data.college + "','" + data.city + "','" + data.pass + "','" + data.phone + "')";
 	        } else if (person == 'shop') {
 	          qr = "INSERT INTO shop (shopid,name,city,email,lat,lng,pass,phone,fare) VALUES('" + data.shopid + "','" + data.name + "','" + data.city + "','" + data.email + "','" + data.lat + "','" + data.lng + "','" + data.pass + "','" + data.phone + "','" + data.fare + "')";
 	        }
-	        _this2.storage.query(qr).then(function (data) {
+	        _this2.storage.query(qr).then(function (res) {
 	          fn(1);
 	        }, function (error) {
-	          alert(JSON.stringify(error.err));
+	          alert(JSON.stringify(error.err) + ' form device');
 	        });
 	      }, function (error) {
 	        console.log("ERROR -> " + JSON.stringify(error.err));
+	      });
+	    }
+	  }, {
+	    key: 'getAccountDetails',
+	    value: function getAccountDetails(type, fn, er) {
+	      this.storage = new _ionic.Storage(_ionic.SqlStorage);
+	      var qr = 'SELECT * FROM ' + type;
+	      this.storage.query(qr).then(function (data) {
+	        fn(data.res.rows.item(0));
+	      }, function (error) {
+	        er(error.err);
 	      });
 	    }
 	  }, {
@@ -62624,7 +62636,7 @@
 	    }
 	  }, {
 	    key: 'newOrder',
-	    value: function newOrder(person, order) {
+	    value: function newOrder(person, order, fn) {
 	      this.storage = new _ionic.Storage(_ionic.SqlStorage);
 	      var src = this.convertArraytoString(order.src);
 	      var quer = '';
@@ -62639,9 +62651,9 @@
 	          quer = "INSERT INTO orders (orderid, user , pages ,completion,date)VALUES('" + order._id + "','" + order.user + "','" + src + "','" + completion + "','" + order.date.toString() + "')";
 	        }
 	      this.storage.query(quer).then(function (data) {
-	        alert('new order added');
+	        fn(1);
 	      }, function (error) {
-	        alert('error for order');
+	        alert(error.err);
 	      });
 	    }
 	  }, {
@@ -62699,6 +62711,8 @@
 
 	var _selectFile = __webpack_require__(362);
 
+	var _userData = __webpack_require__(360);
+
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	/*
@@ -62708,21 +62722,68 @@
 	  Ionic pages and navigation.
 	*/
 	var PrintPage = exports.PrintPage = (_dec = (0, _ionic.Page)({
-	  templateUrl: 'build/pages/print/print.html'
+	  templateUrl: 'build/pages/print/print.html',
+	  providers: [_userData.UserData]
 	}), _dec(_class = function () {
 	  _createClass(PrintPage, null, [{
 	    key: 'parameters',
 	    get: function get() {
-	      return [[_ionic.NavController], [_ionic.Platform], [_ionic.NavParams]];
+	      return [[_ionic.NavController], [_ionic.Platform], [_ionic.NavParams], [_userData.UserData]];
 	    }
 	  }]);
 
-	  function PrintPage(nav, platform, navParams) {
+	  function PrintPage(nav, platform, navParams, userData) {
+	    var _this = this;
+
 	    _classCallCheck(this, PrintPage);
 
 	    this.nav = nav;
+	    this.navParams = navParams;
 	    this.platform = platform;
-	    //this.orders.push(navParams.get('order'));
+	    this.title = "";
+	    this.userData = userData;
+	    this.person = '';
+
+	    this.userData.getPerson(function (data) {
+	      _this.person = data;
+	      //alert(this.person);
+	      if (_this.person == 'shop') {
+	        _this.userData.getAccountDetails(_this.person, function (data) {
+	          _this.listen(data.shopid);
+	          _this.titlech(data.name);
+	        }, function (err) {
+	          alert(err);
+	        });
+	      } else if (_this.person == 'user') {
+	        _this.userData.getAccountDetails(_this.person, function (data) {
+	          _this.titlech(data.name);
+	        }, function (err) {
+	          alert(err);
+	        });
+	      }
+	    }, function (err) {
+	      alert('couldn\'t find any log in database');
+	    });
+	    this.platform.ready().then(function () {
+	      document.addEventListener('backbutton', function () {
+	        if (!_this.nav.canGoBack()) {
+	          navigator.Backbutton.goHome(function () {
+	            console.log('success');
+	          }, function () {
+	            console.log('fail');
+	          });
+	        } else {
+	          _this.nav.pop();
+	        }
+	      }, false);
+
+	      if (typeof navParams.get('data') !== 'undefined') {
+	        _this.details = navParams.get('data');
+	      }
+	      if (typeof navParams.get('msg') !== 'undefined') {
+	        //alert(navParams.get('msg'));
+	      }
+	    });
 	  }
 
 	  _createClass(PrintPage, [{
@@ -62731,10 +62792,20 @@
 	      this.nav.push(_selectFile.SelectFilePage);
 	    }
 	  }, {
+	    key: 'titlech',
+	    value: function titlech(nam) {
+	      this.title = nam;
+	    }
+	  }, {
 	    key: 'listen',
-	    value: function listen() {
+	    value: function listen(shpid) {
 	      var socket = io('https://print-yadunandan004.c9users.io:8080');
-	      socket.on('new_order', function (data) {});
+	      socket.on('connect', function () {
+	        socket.emit('join', shpid);
+	      });
+	      socket.on('new_order', function (data) {
+	        alert(JSON.stringify(data));
+	      });
 	    }
 	  }]);
 
@@ -62762,6 +62833,8 @@
 
 	var _shopsel = __webpack_require__(363);
 
+	var _print = __webpack_require__(361);
+
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	/*
@@ -62782,6 +62855,8 @@
 	  }]);
 
 	  function SelectFilePage(nav, platform, userData) {
+	    var _this = this;
+
 	    _classCallCheck(this, SelectFilePage);
 
 	    this.nav = nav;
@@ -62791,6 +62866,11 @@
 	    this.userData = userData;
 	    this.name = "B/W";
 	    this.totalFiles = 0;
+	    this.userData.getAccountDetails('user', function (data) {
+	      _this.uemail = data.email;
+	    }, function (err) {
+	      alert(err);
+	    });
 	  }
 
 	  _createClass(SelectFilePage, [{
@@ -62810,7 +62890,7 @@
 	  }, {
 	    key: 'selectFile',
 	    value: function selectFile() {
-	      var _this = this;
+	      var _this2 = this;
 
 	      filechooser.open({}, function (data) {
 	        var file = new Object();
@@ -62819,10 +62899,10 @@
 	        file.copies = 1;
 	        file.option = 'B/W';
 	        var filepath = data.filepath;
-	        _this.totalFiles++;
+	        _this2.totalFiles++;
 	        file.path = filepath;
 	        file.name = filepath.substr(filepath.lastIndexOf('/') + 1);
-	        _this.files.splice(0, 0, file);
+	        _this2.files.push(file);
 	      }, function (error) {
 	        alert(error);
 	      });
@@ -62830,7 +62910,7 @@
 	  }, {
 	    key: 'takePhoto',
 	    value: function takePhoto() {
-	      var _this2 = this;
+	      var _this3 = this;
 
 	      this.platform.ready().then(function () {
 	        var options = {
@@ -62848,10 +62928,10 @@
 	          file.name = '';
 	          file.copies = 1;
 	          file.option = 'B/W';
-	          _this2.totalFiles++;
+	          _this3.totalFiles++;
 	          file.path = data;
 	          file.name = data.substr(data.lastIndexOf('/') + 1);
-	          _this2.files.splice(0, 0, file);
+	          _this3.files.push(file);
 	        }, function (error) {
 	          alert(error);
 	        }, options);
@@ -62897,7 +62977,7 @@
 	      options.fileKey = "docs";
 	      options.fileName = filename;
 	      var params = {};
-	      params.user = "abdulla@gmail.com";
+	      params.user = this.uemail;
 	      options.params = params;
 
 	      var ft = new FileTransfer();
@@ -62969,13 +63049,19 @@
 	    this.loadMap();
 	    this.files = navParams.get('src');
 	    this.shpArr;
-	    if (_typeof(cordova.plugins.settings.openSetting) != undefined) {
-	      cordova.plugins.settings.openSetting("location_source", function () {
-	        console.log("opened location_source settings");
-	      }, function () {
-	        console.log("failed to open location_source settings");
-	      });
-	    }
+	    CheckGPS.check(function () {
+	      //GPS is enabled!
+
+	    }, function () {
+	      //GPS is disabled!
+	      if (_typeof(cordova.plugins.settings.openSetting) != undefined) {
+	        cordova.plugins.settings.openSetting("location_source", function () {
+	          console.log("opened location_source settings");
+	        }, function () {
+	          console.log("failed to open location_source settings");
+	        });
+	      }
+	    });
 	  }
 
 	  _createClass(ShopselPage, [{
@@ -62992,12 +63078,10 @@
 	        try {
 	          var resdat = JSON.parse(response.data);
 	          _this.shpArr = resdat.shops;
-	          //var navg=this.nav;
 	          for (var i = 0; i < _this.shpArr.length; i++) {
 	            var LatLng = { lat: _this.shpArr[i].lat, lng: _this.shpArr[i].lng };
 	            _this.addMarker(LatLng);
 	          }
-	          //alert(resdat.shops[0].name);
 	        } catch (e) {
 	          console.error("JSON parsing error");
 	        }
@@ -63020,6 +63104,11 @@
 	            mapTypeId: google.maps.MapTypeId.ROADMAP
 	          };
 	          _this2.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+	          var marker = new google.maps.Marker({
+	            map: _this2.map,
+	            animation: google.maps.Animation.DROP,
+	            position: latLng
+	          });
 	          _this2.loadshops();
 	        }, function (error) {
 	          console.log(error);
@@ -63052,41 +63141,36 @@
 	            //alert(sname);
 	          }
 	        }
-	        var actionSheet = _ionic.ActionSheet.create({
-	          title: sname,
-	          buttons: [{
-	            text: 'Print',
-	            handler: function handler() {
-	              //alert(sname);
-	              //that.sendOrder(shop,files,navg);
-	              var url = "https://print-yadunandan004.c9users.io:8080/orders/neworder";
-	              cordovaHTTP.post(url, {
-	                shopid: shop.shopid,
-	                user: 'abdulla@gmail.com',
-	                src: files
-	              }, { 'Content-type': 'application/json' }, function (response) {
-	                var resdat = JSON.parse(response.data);
-	                that.userData.newOrder('user', resdat, function (data) {
-	                  if (data == 1) {
-	                    //alert('addeed');
-	                    that.nav.push(_print.PrintPage, { order: resdat });
-	                  }
-	                });
-	              }, function (error) {
-	                alert(error);
-	              });
-	            }
-	          }, {
-	            text: 'Cancel',
-	            role: 'cancel',
-	            handler: function handler() {
-	              console.log('Cancel clicked');
-	            }
-	          }]
-	        });
-
-	        navg.present(actionSheet);
+	        that.presentdtls(sname, fare, shop);
 	      });
+	    }
+	  }, {
+	    key: 'presentdtls',
+	    value: function presentdtls(sname, fare, shop) {
+	      var _this3 = this;
+
+	      var actionSheet = _ionic.ActionSheet.create({
+	        title: sname,
+	        buttons: [{
+	          text: 'Print',
+	          role: 'destructive',
+	          handler: function handler() {
+	            _this3.userData.getAccountDetails('user', function (data) {
+	              _this3.sendFile(data.email, shop);
+	            }, function (err) {
+	              alert(err);
+	            });
+	          }
+	        }, {
+	          text: 'Cancel',
+	          role: 'cancel',
+	          handler: function handler() {
+	            console.log('Cancel clicked');
+	          }
+	        }]
+	      });
+
+	      this.nav.present(actionSheet);
 	    }
 	  }, {
 	    key: 'sendOrder',
@@ -63106,6 +63190,27 @@
 	        }]
 	      });
 	      nav.present(prompt);
+	    }
+	  }, {
+	    key: 'sendFile',
+	    value: function sendFile(email, shop) {
+	      var _this4 = this;
+
+	      var url = "https://print-yadunandan004.c9users.io:8080/orders/neworder";
+	      cordovaHTTP.post(url, {
+	        shopid: shop.shopid,
+	        user: email,
+	        src: this.files
+	      }, { 'Content-type': 'application/json' }, function (response) {
+	        var resdat = JSON.parse(response.data);
+	        _this4.userData.newOrder('user', resdat, function (data) {
+	          if (data == 1) {
+	            _this4.nav.setRoot(_print.PrintPage, { msg: resdat });
+	          }
+	        });
+	      }, function (error) {
+	        alert(error);
+	      });
 	    }
 	  }]);
 

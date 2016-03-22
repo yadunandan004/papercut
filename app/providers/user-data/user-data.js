@@ -27,73 +27,69 @@ static get parameters() {
   {
     return this.orders[0];
   }
-  initStorage(person)
+  initStorage(person,fn)
   { 
     this.storage = new Storage(SqlStorage);
     var quer='';
-       if(person=='user')
-       { 
-        quer='CREATE TABLE IF NOT EXISTS orders (orderid TEXT PRIMARY KEY ,shopid TEXT,pages TEXT,completion INTEGER,date TEXT)';
-       }
-       else if(person=='shop')
-       {
-        quer='CREATE TABLE IF NOT EXISTS orders (orderid TEXT PRIMARY KEY , user TEXT, pages TEXT,completion INTEGER,date TEXT)';
-       } 
-            this.storage.query(quer).then((data) => {
-                alert("TABLE CREATED -> " + JSON.stringify(data.res));
-          }, (error) => {
-                console.log("ERROR -> " + JSON.stringify(error.err));
-        });
+     if(person=='user')
+     { 
+      quer='CREATE TABLE IF NOT EXISTS orders (orderid TEXT PRIMARY KEY ,shopid TEXT,pages TEXT,completion INTEGER,date TEXT)';
+     }
+     else if(person=='shop')
+     {
+      quer='CREATE TABLE IF NOT EXISTS orders (orderid TEXT PRIMARY KEY , user TEXT, pages TEXT,completion INTEGER,date TEXT)';
+     } 
+          this.storage.query(quer).then((data) => {
+            fn(1);
+             // alert("TABLE CREATED -> " + JSON.stringify(data.res));
+        }, (error) => {
+              console.log("ERROR -> " + JSON.stringify(error.err));
+      });
   }
-  createPerson(person,details,fn)
+  createPerson(details,fn)
   {
     this.storage = new Storage(SqlStorage);
-    
      var qr="CREATE TABLE IF NOT EXISTS person (type TEXT)";  
     this.storage.query(qr).then((data)=>{
        qr="SELECT * FROM person";
     this.storage.query(qr).then((data)=>{
       if(data.res.rows.length==0)
-    {
-        qr="INSERT INTO person (type) VALUES('"+person+"')";
+      {
+        qr="INSERT INTO person (type) VALUES('"+details.type+"')";
         this.storage.query(qr).then((data)=>{
-          //alert(JSON.stringify(data.res));
-
-            this.createAccount(person,details,(data)=>{
+            this.createAccount(details,(data)=>{
               fn(data);
             });
         },(error)=>{
-          alert(JSON.stringify(error.err));
+          alert(JSON.stringify(error.err)+ ' from device');
         });
       }
       else
-    {
-      alert('user session already present');
+      {
+        alert('user session already present');
+      }
     }
-    }
-
     ,(error)=>{
       console.log(error);
     }
-  );
-    
-    
+  );  
   },(error)=>{
       alert(JSON.stringify(error.err));
     });
   }
-  getPerson()
+  getPerson(fn,er)
   {
     this.storage = new Storage(SqlStorage);
     var qr="SELECT * FROM person";
     this.storage.query(qr).then(data=>{
-        alert(data.res.rows.item(0).type);
+        fn(data.res.rows.item(0).type);
     },error=>{
-        alert(JSON.stringify(error.err))
+        //console.log(JSON.stringify(error.err))
+        er(1);
     });
   }
   islogged()
-  {
+  { 
     this.storage=new Storage(SqlStorage);
     var qr='SELECT * FROM person';
     this.storage.query(qr).then((data)=>{
@@ -109,9 +105,10 @@ static get parameters() {
         alert(JSON.stringify(error.err));
     });
   }
-  createAccount(person,data,fn)
+  createAccount(data,fn)
   {
     this.storage = new Storage(SqlStorage);
+    var person=data.type;
     var qr='';
     if(person=='user')
     {
@@ -121,7 +118,7 @@ static get parameters() {
     {
       qr="CREATE TABLE IF NOT EXISTS shop (shopid TEXT PRIMARY KEY,name TEXT,city TEXT,email TEXT,lat INTEGER,lng INTEGER,pass TEXT,phone TEXT,fare INTEGER)";
     } 
-    this.storage.query(qr).then((data)=>{
+    this.storage.query(qr).then((res)=>{
       if(person=='user')
       {
        qr="INSERT INTO user (email,name,college,city,pass,phone) VALUES('"+data.email+"','"+data.name+"','"+data.college+"','"+data.city+"','"+data.pass+"','"+data.phone+"')";
@@ -130,15 +127,25 @@ static get parameters() {
       {
         qr="INSERT INTO shop (shopid,name,city,email,lat,lng,pass,phone,fare) VALUES('"+data.shopid+"','"+data.name+"','"+data.city+"','"+data.email+"','"+data.lat+"','"+data.lng+"','"+data.pass+"','"+data.phone+"','"+data.fare+"')";
       }
-      this.storage.query(qr).then((data)=>{
+      this.storage.query(qr).then((res)=>{
           fn(1);
       },(error)=>{
-        alert(JSON.stringify(error.err));
+        alert(JSON.stringify(error.err)+' form device');
       });
     },
     (error)=>{
           console.log("ERROR -> " + JSON.stringify(error.err));
     }); 
+  }
+  getAccountDetails(type,fn,er)
+  {
+    this.storage=new Storage(SqlStorage);
+    var qr='SELECT * FROM '+type;
+     this.storage.query(qr).then((data)=>{
+          fn(data.res.rows.item(0));
+       },(error)=>{
+          er(error.err);
+       });
   }
   checkAccount(person)
   {
@@ -150,7 +157,7 @@ static get parameters() {
       console.log(error);
     });
   }
-  newOrder(person,order)
+  newOrder(person,order,fn)
   {
     this.storage = new Storage(SqlStorage);
     var src=this.convertArraytoString(order.src);
@@ -170,9 +177,9 @@ static get parameters() {
         quer="INSERT INTO orders (orderid, user , pages ,completion,date)VALUES('"+order._id+"','"+order.user+"','"+src+"','"+completion+"','"+order.date.toString()+"')";
        }
        this.storage.query(quer).then((data)=>{
-          alert('new order added');
+          fn(1);
        },(error)=>{
-          alert('error for order');
+          alert(error.err);
        });
   }
   logout(person)

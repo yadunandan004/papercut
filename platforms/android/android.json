@@ -51,6 +51,10 @@
                         {
                             "xml": "<feature name=\"BackbuttonPlugin\"><param name=\"android-package\" value=\"com.badrit.Backbutton.BackbuttonPlugin\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"CheckGPS\"><param name=\"android-package\" value=\"de.fastr.phonegap.plugins.CheckGPS\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -165,6 +169,9 @@
             "PACKAGE_NAME": "io.ionic.starter"
         },
         "cordova-plugin-backbutton": {
+            "PACKAGE_NAME": "io.ionic.starter"
+        },
+        "cordova-plugin-fastrde-checkgps": {
             "PACKAGE_NAME": "io.ionic.starter"
         }
     },
@@ -428,6 +435,13 @@
             "id": "cordova-plugin-backbutton.Backbutton",
             "clobbers": [
                 "navigator.Backbutton"
+            ]
+        },
+        {
+            "file": "plugins/cordova-plugin-fastrde-checkgps/www/CheckGPS.js",
+            "id": "cordova-plugin-fastrde-checkgps.CheckGPS",
+            "clobbers": [
+                "CheckGPS"
             ]
         }
     ]

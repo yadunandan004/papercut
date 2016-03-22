@@ -259,6 +259,13 @@ module.exports = [
         "clobbers": [
             "navigator.Backbutton"
         ]
+    },
+    {
+        "file": "plugins/cordova-plugin-fastrde-checkgps/www/CheckGPS.js",
+        "id": "cordova-plugin-fastrde-checkgps.CheckGPS",
+        "clobbers": [
+            "CheckGPS"
+        ]
     }
 ];
 module.exports.metadata = 
