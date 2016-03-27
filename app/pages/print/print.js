@@ -1,6 +1,7 @@
 import {Page, NavController,Platform,NavParams} from 'ionic-framework/ionic';
 import {SelectFilePage} from '../select-file/select-file';
 import {UserData} from '../../providers/user-data/user-data';
+import {NgZone} from "angular2/core";
 
 /*
   Generated class for the PrintPage page.
@@ -18,13 +19,15 @@ export class PrintPage {
     return [[NavController],[Platform],[NavParams],[UserData]];
   }
   constructor(nav,platform,navParams,userData) {
+
     this.nav = nav;
+    this.zone = new NgZone({enableLongStackTrace: false});
     this.navParams=navParams;
     this.platform=platform;
     this.title="";
     this.userData=userData;
     this.person='';
-    
+    this.orders=[];
     this.userData.getPerson((data)=>{
       this.person=data;
       //alert(this.person);
@@ -32,7 +35,9 @@ export class PrintPage {
       {
         this.userData.getAccountDetails(this.person,(data)=>{
           this.listen(data.shopid);
-          this.titlech(data.name);
+          this.zone.run(() => {
+           this.title=data.name; 
+            });
         },(err)=>{
             alert(err);
         });    
@@ -40,8 +45,10 @@ export class PrintPage {
       else if(this.person=='user')
       {
         this.userData.getAccountDetails(this.person,(data)=>{
-          this.titlech(data.name);
-
+          this.zone.run(() => {
+           this.title=data.name;
+           alert('called'); 
+            });
         },(err)=>{
             alert(err);
         });
@@ -77,10 +84,7 @@ export class PrintPage {
   selectFile(event,item){
   	this.nav.push(SelectFilePage);
   }
-  titlech(nam)
-  {
-    this.title=nam;
-  }
+  
   listen(shpid)
   {
     var socket=io('https://print-yadunandan004.c9users.io:8080');
@@ -88,7 +92,10 @@ export class PrintPage {
         socket.emit('join',shpid);
        });
       socket.on('new_order',(data)=>{
-        alert(JSON.stringify(data));
+        //        alert(JSON.stringify(data));
+        this.zone.run(() => {
+           this.orders.push(JSON.stringify(data));
+            });
       });   
   }
 }

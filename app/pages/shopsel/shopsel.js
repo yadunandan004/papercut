@@ -25,9 +25,9 @@ export class ShopselPage {
     this.loadMap();
     this.files=navParams.get('src');
     this.shpArr;
+    this.city='';
     CheckGPS.check(function(){
     //GPS is enabled!
-
     },
     function(){
       //GPS is disabled!
@@ -46,7 +46,7 @@ export class ShopselPage {
   {
       var url = 'https://print-yadunandan004.c9users.io:8080/shops/findshop';
      cordovaHTTP.post(url, {
-    city:'Bangalore',  
+    city:this.city,  
     lat: this.lat,
     lng: this.lng
     },{'Content-type' :  'application/json'},(response)=>{
@@ -72,25 +72,60 @@ export class ShopselPage {
           this.lat=position.coords.latitude;
           this.lng=position.coords.longitude;
           var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-          var mapOptions = {
+          this.getcity(latLng,(data)=>{
+            var mapOptions = {
               center: latLng,
               zoom: 16,
               mapTypeId: google.maps.MapTypeId.ROADMAP
-          } 
-          this.map = new google.maps.Map(document.getElementById("map"), mapOptions);
-          var marker = new google.maps.Marker({
-          map: this.map,
-          animation: google.maps.Animation.DROP,
-          position: latLng
-        });
+           } 
+           this.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+          /*var marker = new google.maps.Marker({
+              map: this.map,
+              animation: google.maps.Animation.DROP,
+              position: latLng
+            });*/
           this.loadshops();
+          });   
       },
       (error) => {
           console.log(error);
       }, options
   );
  });
+}
+getcity(latlng,fn)
+{
+  var geocoder;
+geocoder = new google.maps.Geocoder();
+//var latlng = new google.maps.LatLng(latitude, longitude);
 
+geocoder.geocode(
+    {'latLng': latlng}, 
+    (results, status)=> {
+
+        if (status == google.maps.GeocoderStatus.OK) {
+
+                if (results[0]) {
+
+                    var add= results[0].formatted_address ;
+                    //alert(add);
+                    var  value=add.split(",");
+                    var count=value.length;
+                    //var country=value[count-1];
+                   //var  state=value[count-2];
+                     this.city=value[count-3].trim();
+                      fn(1);
+                    //alert("city name is: " + this.city);
+                }
+                else  {
+                    alert("address not found");
+                }
+              }
+         else {
+            alert("Geocoder failed due to: " + status);
+        }
+    }
+  );
 }
 addMarker(LatLng){
  var navg=this.nav;

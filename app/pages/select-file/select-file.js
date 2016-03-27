@@ -2,6 +2,7 @@ import {Page, NavController,Platform,Alert} from 'ionic-framework/ionic';
 import {UserData} from '../../providers/user-data/user-data';
 import {ShopselPage} from '../shopsel/shopsel';
 import {PrintPage} from '../print/print';
+import {NgZone} from "angular2/core";
 /*
   Generated class for the SelectFilePage page.
 
@@ -19,6 +20,7 @@ export class SelectFilePage {
   }
   constructor(nav,platform,userData) {
     this.nav = nav;
+    this.zone = new NgZone({enableLongStackTrace: false});
     this.platform=platform;
     this.files=new Array(); //file path, Name,option,copy
     this.supload=0;
@@ -49,6 +51,7 @@ export class SelectFilePage {
   selectFile()
   {    
      filechooser.open({},(data)=>{
+        
         var file=new Object();
         file.path='';
         file.name='';
@@ -58,7 +61,10 @@ export class SelectFilePage {
         this.totalFiles++;
         file.path=filepath;
         file.name=filepath.substr(filepath.lastIndexOf('/')+1);
+         this.zone.run(() => {
         this.files.push(file);
+        });
+       
 
      },(error)=>{
       alert(error);

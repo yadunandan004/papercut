@@ -112,7 +112,7 @@ static get parameters() {
     var qr='';
     if(person=='user')
     {
-        qr="CREATE TABLE IF NOT EXISTS user (email TEXT PRIMARY KEY,name TEXT,college TEXT,city TEXT,pass TEXT,phone TEXT)";
+        qr="CREATE TABLE IF NOT EXISTS user (email TEXT PRIMARY KEY,name TEXT,college TEXT,pass TEXT,phone TEXT)";
     }
     else if(person=='shop')
     {
@@ -121,7 +121,7 @@ static get parameters() {
     this.storage.query(qr).then((res)=>{
       if(person=='user')
       {
-       qr="INSERT INTO user (email,name,college,city,pass,phone) VALUES('"+data.email+"','"+data.name+"','"+data.college+"','"+data.city+"','"+data.pass+"','"+data.phone+"')";
+       qr="INSERT INTO user (email,name,college,pass,phone) VALUES('"+data.email+"','"+data.name+"','"+data.college+"','"+data.pass+"','"+data.phone+"')";
       }
       else if(person=='shop')
       {

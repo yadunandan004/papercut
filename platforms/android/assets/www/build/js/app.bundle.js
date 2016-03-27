@@ -62310,7 +62310,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-			value: true
+		value: true
 	});
 	exports.SignupPage = undefined;
 
@@ -62333,128 +62333,162 @@
 	  Ionic pages and navigation.
 	*/
 	var SignupPage = exports.SignupPage = (_dec = (0, _ionic.Page)({
-			templateUrl: 'build/pages/signup/signup.html',
-			providers: [_userData.UserData]
+		templateUrl: 'build/pages/signup/signup.html',
+		providers: [_userData.UserData]
 	}), _dec(_class = function () {
-			_createClass(SignupPage, null, [{
-					key: 'parameters',
-					get: function get() {
-							return [[_ionic.NavController], [_ionic.Platform], [_userData.UserData]];
-					}
-			}]);
-
-			function SignupPage(nav, platform, userData) {
-					_classCallCheck(this, SignupPage);
-
-					this.nav = nav;
-					this.userData = userData;
-					this.platform = platform;
-					this.profile = 'usr';
+		_createClass(SignupPage, null, [{
+			key: 'parameters',
+			get: function get() {
+				return [[_ionic.NavController], [_ionic.Platform], [_userData.UserData]];
 			}
+		}]);
 
-			_createClass(SignupPage, [{
-					key: 'signup',
-					value: function signup() {
-							if (this.profile == 'usr') {
-									//alert('selected user profile');
-									this.adduser();
-							} else if (this.profile == 'shp') {
-									//alert('shop profile selected \n'+this.shoplat+'\n'+this.shoplng);
-									this.getcords();
-							}
-					}
-			}, {
-					key: 'adduser',
-					value: function adduser() {
-							var _this = this;
+		function SignupPage(nav, platform, userData) {
+			_classCallCheck(this, SignupPage);
 
-							var url = 'https://print-yadunandan004.c9users.io:8080/users/adduser';
-							cordovaHTTP.post(url, {
-									name: this.username,
-									college: this.college,
-									city: this.city,
-									email: this.useremail,
-									pass: this.pass,
-									phone: this.phone
-							}, { 'Content-type': 'application/json' }, function (response) {
-									try {
-											var resdat = JSON.parse(response.data);
-											if (resdat != 0) {
-													var alert = _ionic.Alert.create({
-															title: 'Response',
-															subTitle: 'Signed in Successfully',
-															buttons: ['Dismiss']
-													});
-													_this.nav.present(alert);
-													_this.userData.createPerson('user', resdat, function (data) {
-															if (data == 1) {
-																	_this.nav.push(_print.PrintPage);
-															}
-													});
-											} else {
-													alert('Couldn\'t signup');
-											}
-									} catch (e) {
-											console.error("JSON parsing error");
-									}
+			this.nav = nav;
+			this.userData = userData;
+			this.platform = platform;
+			this.profile = 'usr';
+		}
+
+		_createClass(SignupPage, [{
+			key: 'signup',
+			value: function signup() {
+				if (this.profile == 'usr') {
+					//alert('selected user profile');
+					this.adduser();
+				} else if (this.profile == 'shp') {
+					//alert('shop profile selected \n'+this.shoplat+'\n'+this.shoplng);
+					this.getcords();
+				}
+			}
+		}, {
+			key: 'adduser',
+			value: function adduser() {
+				var _this = this;
+
+				var url = 'https://print-yadunandan004.c9users.io:8080/users/adduser';
+				cordovaHTTP.post(url, {
+					name: this.username,
+					college: this.college,
+					email: this.useremail,
+					pass: this.pass,
+					phone: this.phone
+				}, { 'Content-type': 'application/json' }, function (response) {
+					try {
+						var resdat = JSON.parse(response.data);
+						if (resdat != 0) {
+							var alert = _ionic.Alert.create({
+								title: 'Response',
+								subTitle: 'Signed in Successfully',
+								buttons: ['Dismiss']
 							});
-					}
-			}, {
-					key: 'addshop',
-					value: function addshop() {
-							var _this2 = this;
-
-							var url = 'https://print-yadunandan004.c9users.io:8080/shops/addshop';
-							cordovaHTTP.post(url, {
-									name: this.shopname,
-									city: this.city,
-									email: this.shopemail,
-									lat: this.shoplat,
-									lng: this.shoplng,
-									pass: this.pass,
-									phone: this.phone
-							}, { 'Content-type': 'application/json' }, function (response) {
-									try {
-											var resdat = JSON.parse(response.data);
-											if (resdat != 0) {
-													var alert = _ionic.Alert.create({
-															title: 'Response',
-															subTitle: 'Signed in Successfully',
-															buttons: ['Dismiss']
-													});
-													_this2.nav.present(alert);
-													_this2.userData.createPerson('shop', resdat, function (data) {
-															if (data == 1) {
-																	_this2.nav.push(_print.PrintPage);
-															}
-													});
-											} else {
-													alert('couldn\'t signup');
-											}
-									} catch (e) {
-											console.error("JSON parsing error");
-									}
+							_this.nav.present(alert);
+							_this.userData.createPerson('user', resdat, function (data) {
+								if (data == 1) {
+									_this.nav.setRoot(_print.PrintPage);
+								}
 							});
+						} else {
+							alert('Couldn\'t signup');
+						}
+					} catch (e) {
+						console.error("JSON parsing error");
 					}
-			}, {
-					key: 'getcords',
-					value: function getcords() {
-							var _this3 = this;
+				});
+			}
+		}, {
+			key: 'addshop',
+			value: function addshop() {
+				var _this2 = this;
 
-							var options = { timeout: 10000, enableHighAccuracy: true };
-							this.platform.ready().then(function () {
-									navigator.geolocation.getCurrentPosition(function (position) {
-											_this3.shoplat = position.coords.latitude;
-											_this3.shoplng = position.coords.longitude;
-											_this3.addshop();
-									}, function (error) {
-											console.log(error);
-									}, options);
+				// alert('shop adding');
+				var url = 'https://print-yadunandan004.c9users.io:8080/shops/addshop';
+				cordovaHTTP.post(url, {
+					name: this.shopname,
+					city: this.city,
+					email: this.shopemail,
+					lat: this.shoplat,
+					lng: this.shoplng,
+					pass: this.pass,
+					phone: this.phone
+				}, { 'Content-type': 'application/json' }, function (response) {
+					try {
+						var resdat = JSON.parse(response.data);
+						if (resdat != 0) {
+							var alert = _ionic.Alert.create({
+								title: 'Response',
+								subTitle: 'Signed in Successfully',
+								buttons: ['Dismiss']
 							});
+							_this2.nav.present(alert);
+							_this2.userData.createPerson('shop', resdat, function (data) {
+								if (data == 1) {
+									_this2.nav.setRoot(_print.PrintPage);
+								}
+							});
+						} else {
+							alert('couldn\'t signup');
+						}
+					} catch (e) {
+						console.error("JSON parsing error");
 					}
-			}]);
+				});
+			}
+		}, {
+			key: 'getcords',
+			value: function getcords() {
+				var _this3 = this;
 
-			return SignupPage;
+				var options = { timeout: 10000, enableHighAccuracy: true };
+				this.platform.ready().then(function () {
+					navigator.geolocation.getCurrentPosition(function (position) {
+						_this3.shoplat = position.coords.latitude;
+						_this3.shoplng = position.coords.longitude;
+						_this3.getcity(function (data) {
+							_this3.addshop();
+						});
+					}, function (error) {
+						console.log(error);
+					}, options);
+				});
+			}
+		}, {
+			key: 'getcity',
+			value: function getcity(fn) {
+				var _this4 = this;
+
+				var geocoder;
+				geocoder = new google.maps.Geocoder();
+				var latlng = new google.maps.LatLng(this.shoplat, this.shoplng);
+
+				geocoder.geocode({ 'latLng': latlng }, function (results, status) {
+
+					if (status == google.maps.GeocoderStatus.OK) {
+
+						if (results[0]) {
+
+							var add = results[0].formatted_address;
+							//alert(add);
+							var value = add.split(",");
+							var count = value.length;
+							//var country=value[count-1];
+							//var  state=value[count-2];
+							_this4.city = value[count - 3].trim();
+							//alert("city name is: " + this.city);
+							fn(1);
+						} else {
+							alert("address not found");
+						}
+					} else {
+						alert("Geocoder failed due to: " + status);
+					}
+				});
+			}
+		}]);
+
+		return SignupPage;
 	}()) || _class);
 
 /***/ },
@@ -62593,13 +62627,13 @@
 	      var person = data.type;
 	      var qr = '';
 	      if (person == 'user') {
-	        qr = "CREATE TABLE IF NOT EXISTS user (email TEXT PRIMARY KEY,name TEXT,college TEXT,city TEXT,pass TEXT,phone TEXT)";
+	        qr = "CREATE TABLE IF NOT EXISTS user (email TEXT PRIMARY KEY,name TEXT,college TEXT,pass TEXT,phone TEXT)";
 	      } else if (person == 'shop') {
 	        qr = "CREATE TABLE IF NOT EXISTS shop (shopid TEXT PRIMARY KEY,name TEXT,city TEXT,email TEXT,lat INTEGER,lng INTEGER,pass TEXT,phone TEXT,fare INTEGER)";
 	      }
 	      this.storage.query(qr).then(function (res) {
 	        if (person == 'user') {
-	          qr = "INSERT INTO user (email,name,college,city,pass,phone) VALUES('" + data.email + "','" + data.name + "','" + data.college + "','" + data.city + "','" + data.pass + "','" + data.phone + "')";
+	          qr = "INSERT INTO user (email,name,college,pass,phone) VALUES('" + data.email + "','" + data.name + "','" + data.college + "','" + data.pass + "','" + data.phone + "')";
 	        } else if (person == 'shop') {
 	          qr = "INSERT INTO shop (shopid,name,city,email,lat,lng,pass,phone,fare) VALUES('" + data.shopid + "','" + data.name + "','" + data.city + "','" + data.email + "','" + data.lat + "','" + data.lng + "','" + data.pass + "','" + data.phone + "','" + data.fare + "')";
 	        }
@@ -62713,6 +62747,8 @@
 
 	var _userData = __webpack_require__(360);
 
+	var _core = __webpack_require__(7);
+
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	/*
@@ -62738,25 +62774,31 @@
 	    _classCallCheck(this, PrintPage);
 
 	    this.nav = nav;
+	    this.zone = new _core.NgZone({ enableLongStackTrace: false });
 	    this.navParams = navParams;
 	    this.platform = platform;
 	    this.title = "";
 	    this.userData = userData;
 	    this.person = '';
-
+	    this.orders = [];
 	    this.userData.getPerson(function (data) {
 	      _this.person = data;
 	      //alert(this.person);
 	      if (_this.person == 'shop') {
 	        _this.userData.getAccountDetails(_this.person, function (data) {
 	          _this.listen(data.shopid);
-	          _this.titlech(data.name);
+	          _this.zone.run(function () {
+	            _this.title = data.name;
+	          });
 	        }, function (err) {
 	          alert(err);
 	        });
 	      } else if (_this.person == 'user') {
 	        _this.userData.getAccountDetails(_this.person, function (data) {
-	          _this.titlech(data.name);
+	          _this.zone.run(function () {
+	            _this.title = data.name;
+	            alert('called');
+	          });
 	        }, function (err) {
 	          alert(err);
 	        });
@@ -62792,19 +62834,19 @@
 	      this.nav.push(_selectFile.SelectFilePage);
 	    }
 	  }, {
-	    key: 'titlech',
-	    value: function titlech(nam) {
-	      this.title = nam;
-	    }
-	  }, {
 	    key: 'listen',
 	    value: function listen(shpid) {
+	      var _this2 = this;
+
 	      var socket = io('https://print-yadunandan004.c9users.io:8080');
 	      socket.on('connect', function () {
 	        socket.emit('join', shpid);
 	      });
 	      socket.on('new_order', function (data) {
-	        alert(JSON.stringify(data));
+	        //        alert(JSON.stringify(data));
+	        _this2.zone.run(function () {
+	          _this2.orders.push(JSON.stringify(data));
+	        });
 	      });
 	    }
 	  }]);
@@ -62835,6 +62877,8 @@
 
 	var _print = __webpack_require__(361);
 
+	var _core = __webpack_require__(7);
+
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	/*
@@ -62860,6 +62904,7 @@
 	    _classCallCheck(this, SelectFilePage);
 
 	    this.nav = nav;
+	    this.zone = new _core.NgZone({ enableLongStackTrace: false });
 	    this.platform = platform;
 	    this.files = new Array(); //file path, Name,option,copy
 	    this.supload = 0;
@@ -62893,6 +62938,7 @@
 	      var _this2 = this;
 
 	      filechooser.open({}, function (data) {
+
 	        var file = new Object();
 	        file.path = '';
 	        file.name = '';
@@ -62902,7 +62948,9 @@
 	        _this2.totalFiles++;
 	        file.path = filepath;
 	        file.name = filepath.substr(filepath.lastIndexOf('/') + 1);
-	        _this2.files.push(file);
+	        _this2.zone.run(function () {
+	          _this2.files.push(file);
+	        });
 	      }, function (error) {
 	        alert(error);
 	      });
@@ -63049,9 +63097,9 @@
 	    this.loadMap();
 	    this.files = navParams.get('src');
 	    this.shpArr;
+	    this.city = '';
 	    CheckGPS.check(function () {
 	      //GPS is enabled!
-
 	    }, function () {
 	      //GPS is disabled!
 	      if (_typeof(cordova.plugins.settings.openSetting) != undefined) {
@@ -63071,7 +63119,7 @@
 
 	      var url = 'https://print-yadunandan004.c9users.io:8080/shops/findshop';
 	      cordovaHTTP.post(url, {
-	        city: 'Bangalore',
+	        city: this.city,
 	        lat: this.lat,
 	        lng: this.lng
 	      }, { 'Content-type': 'application/json' }, function (response) {
@@ -63098,21 +63146,55 @@
 	          _this2.lat = position.coords.latitude;
 	          _this2.lng = position.coords.longitude;
 	          var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-	          var mapOptions = {
-	            center: latLng,
-	            zoom: 16,
-	            mapTypeId: google.maps.MapTypeId.ROADMAP
-	          };
-	          _this2.map = new google.maps.Map(document.getElementById("map"), mapOptions);
-	          var marker = new google.maps.Marker({
-	            map: _this2.map,
-	            animation: google.maps.Animation.DROP,
-	            position: latLng
+	          _this2.getcity(latLng, function (data) {
+	            var mapOptions = {
+	              center: latLng,
+	              zoom: 16,
+	              mapTypeId: google.maps.MapTypeId.ROADMAP
+	            };
+	            _this2.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+	            /*var marker = new google.maps.Marker({
+	                map: this.map,
+	                animation: google.maps.Animation.DROP,
+	                position: latLng
+	              });*/
+	            _this2.loadshops();
 	          });
-	          _this2.loadshops();
 	        }, function (error) {
 	          console.log(error);
 	        }, options);
+	      });
+	    }
+	  }, {
+	    key: 'getcity',
+	    value: function getcity(latlng, fn) {
+	      var _this3 = this;
+
+	      var geocoder;
+	      geocoder = new google.maps.Geocoder();
+	      //var latlng = new google.maps.LatLng(latitude, longitude);
+
+	      geocoder.geocode({ 'latLng': latlng }, function (results, status) {
+
+	        if (status == google.maps.GeocoderStatus.OK) {
+
+	          if (results[0]) {
+
+	            var add = results[0].formatted_address;
+	            //alert(add);
+	            var value = add.split(",");
+	            var count = value.length;
+	            //var country=value[count-1];
+	            //var  state=value[count-2];
+	            _this3.city = value[count - 3].trim();
+	            fn(1);
+	            //alert("city name is: " + this.city);
+	          } else {
+	              alert("address not found");
+	            }
+	        } else {
+	          alert("Geocoder failed due to: " + status);
+	        }
 	      });
 	    }
 	  }, {
@@ -63147,7 +63229,7 @@
 	  }, {
 	    key: 'presentdtls',
 	    value: function presentdtls(sname, fare, shop) {
-	      var _this3 = this;
+	      var _this4 = this;
 
 	      var actionSheet = _ionic.ActionSheet.create({
 	        title: sname,
@@ -63155,8 +63237,8 @@
 	          text: 'Print',
 	          role: 'destructive',
 	          handler: function handler() {
-	            _this3.userData.getAccountDetails('user', function (data) {
-	              _this3.sendFile(data.email, shop);
+	            _this4.userData.getAccountDetails('user', function (data) {
+	              _this4.sendFile(data.email, shop);
 	            }, function (err) {
 	              alert(err);
 	            });
@@ -63194,7 +63276,7 @@
 	  }, {
 	    key: 'sendFile',
 	    value: function sendFile(email, shop) {
-	      var _this4 = this;
+	      var _this5 = this;
 
 	      var url = "https://print-yadunandan004.c9users.io:8080/orders/neworder";
 	      cordovaHTTP.post(url, {
@@ -63203,9 +63285,9 @@
 	        src: this.files
 	      }, { 'Content-type': 'application/json' }, function (response) {
 	        var resdat = JSON.parse(response.data);
-	        _this4.userData.newOrder('user', resdat, function (data) {
+	        _this5.userData.newOrder('user', resdat, function (data) {
 	          if (data == 1) {
-	            _this4.nav.setRoot(_print.PrintPage, { msg: resdat });
+	            _this5.nav.setRoot(_print.PrintPage, { msg: resdat });
 	          }
 	        });
 	      }, function (error) {

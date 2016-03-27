@@ -42,7 +42,6 @@ export class SignupPage {
      cordovaHTTP.post(url, {
     name:this.username,
     college:this.college,
-    city:this.city,
     email: this.useremail,
     pass: this.pass,
     phone:this.phone
@@ -59,7 +58,7 @@ export class SignupPage {
 		                this.userData.createPerson('user',resdat,(data)=>{
 				          if(data==1)
 				          {
-				            this.nav.push(PrintPage);
+				            this.nav.setRoot(PrintPage);
 				          }
 	        			});
 		            }
@@ -73,6 +72,7 @@ export class SignupPage {
     }
      addshop()
     {
+     // alert('shop adding');
       var url = 'https://print-yadunandan004.c9users.io:8080/shops/addshop';
      cordovaHTTP.post(url, {
     name:this.shopname,
@@ -95,7 +95,7 @@ export class SignupPage {
 		                 this.userData.createPerson('shop',resdat,(data)=>{
 				          if(data==1)
 				          {			            
-				            this.nav.push(PrintPage);
+				            this.nav.setRoot(PrintPage);
 				          }
         			});
 		           }
@@ -114,10 +114,47 @@ export class SignupPage {
 	 navigator.geolocation.getCurrentPosition((position)=>{
 	 	this.shoplat=position.coords.latitude;
 	 	this.shoplng=position.coords.longitude;
-	 	this.addshop();
+	 	this.getcity((data)=>{
+	 		this.addshop();
+	 	}); 	
 	 },(error)=>{
 	 		console.log(error);
 	 },options);
 	});
+	}
+getcity(fn)
+	{
+	var geocoder;
+	geocoder = new google.maps.Geocoder();
+	var latlng = new google.maps.LatLng(this.shoplat, this.shoplng);
+
+	geocoder.geocode(
+	    {'latLng': latlng}, 
+	    (results, status)=> {
+
+	        if (status == google.maps.GeocoderStatus.OK) {
+
+	                if (results[0]) {
+
+	                    var add= results[0].formatted_address ;
+	                    //alert(add);
+	                    var  value=add.split(",");
+	                    var count=value.length;
+	                    //var country=value[count-1];
+	                   //var  state=value[count-2];
+	                     this.city=value[count-3].trim();
+	                     //alert("city name is: " + this.city);
+	                     fn(1);
+	                    
+	                }
+	                else  {
+	                    alert("address not found");
+	                }
+	              }
+	         else {
+	            alert("Geocoder failed due to: " + status);
+	        }
+	    }
+	  );
 	}
 }
