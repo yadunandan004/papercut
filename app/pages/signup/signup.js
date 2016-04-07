@@ -1,6 +1,6 @@
-import {Page,NavController,Platform,Alert} from 'ionic-framework/ionic';
+import {Page,NavController,Platform,Alert} from 'ionic-angular';
 import {UserData} from '../../providers/user-data/user-data';
-import {PrintPage} from '../print/print';
+import {ProfilePage} from '../profile/profile';
 
 /*
   Generated class for the SignupPage page.
@@ -58,7 +58,7 @@ export class SignupPage {
 		                this.userData.createPerson('user',resdat,(data)=>{
 				          if(data==1)
 				          {
-				            this.nav.setRoot(PrintPage);
+				            this.nav.setRoot(ProfilePage);
 				          }
 	        			});
 		            }
@@ -95,7 +95,7 @@ export class SignupPage {
 		                 this.userData.createPerson('shop',resdat,(data)=>{
 				          if(data==1)
 				          {			            
-				            this.nav.setRoot(PrintPage);
+				            this.nav.setRoot(ProfilePage);
 				          }
         			});
 		           }

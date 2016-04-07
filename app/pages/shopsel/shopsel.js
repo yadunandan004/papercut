@@ -1,6 +1,6 @@
-import {Page,Platform, NavController,ActionSheet,NavParams,Alert} from 'ionic-framework/ionic';
+import {Page,Platform, NavController,ActionSheet,NavParams,Alert} from 'ionic-angular';
 import {UserData} from '../../providers/user-data/user-data';
-import {PrintPage} from '../print/print';
+import {ProfilePage} from '../profile/profile';
 /*
   Generated class for the ShopselPage page.
   See http://ionicframework.com/docs/v2/components/#navigation for more info on
@@ -71,7 +71,9 @@ export class ShopselPage {
       (position) => {
           this.lat=position.coords.latitude;
           this.lng=position.coords.longitude;
+          
           var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+          
           this.getcity(latLng,(data)=>{
             var mapOptions = {
               center: latLng,
@@ -79,6 +81,7 @@ export class ShopselPage {
               mapTypeId: google.maps.MapTypeId.ROADMAP
            } 
            this.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+           
           /*var marker = new google.maps.Marker({
               map: this.map,
               animation: google.maps.Animation.DROP,
@@ -220,7 +223,7 @@ addMarker(LatLng){
             this.userData.newOrder('user',resdat,(data)=>{
               if(data==1)
               {
-                this.nav.setRoot(PrintPage,{msg:resdat});
+                this.nav.setRoot(ProfilePage,{msg:resdat});
               }
             });
             },(error)=>{

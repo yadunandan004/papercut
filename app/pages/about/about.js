@@ -1,16 +1,20 @@
 import {Page, NavController} from 'ionic-angular';
 
 /*
-  Generated class for the PaymentPage page.
+  Generated class for the AboutPage page.
 
   See http://ionicframework.com/docs/v2/components/#navigation for more info on
   Ionic pages and navigation.
 */
 @Page({
-  templateUrl: 'build/pages/payment/payment.html',
+  templateUrl: 'build/pages/about/about.html',
 })
-export class PaymentPage {
-  constructor(nav: NavController) {
+export class AboutPage {
+  static get parameters() {
+    return [[NavController]];
+  }
+
+  constructor(nav) {
     this.nav = nav;
   }
 }

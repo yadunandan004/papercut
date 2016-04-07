@@ -1,7 +1,6 @@
-import {Page, NavController,Platform,Alert} from 'ionic-framework/ionic';
+import {Page, NavController,Platform,Alert} from 'ionic-angular';
 import {UserData} from '../../providers/user-data/user-data';
 import {ShopselPage} from '../shopsel/shopsel';
-import {PrintPage} from '../print/print';
 import {NgZone} from "angular2/core";
 /*
   Generated class for the SelectFilePage page.
@@ -51,7 +50,6 @@ export class SelectFilePage {
   selectFile()
   {    
      filechooser.open({},(data)=>{
-        
         var file=new Object();
         file.path='';
         file.name='';
@@ -62,16 +60,13 @@ export class SelectFilePage {
         file.path=filepath;
         file.name=filepath.substr(filepath.lastIndexOf('/')+1);
          this.zone.run(() => {
-        this.files.push(file);
+          this.files.push(file);
         });
-       
-
      },(error)=>{
       alert(error);
      }); 
   }
   takePhoto() {
-    this.platform.ready().then(() => {
       var options = {
         quality: 80,
         destinationType: Camera.DestinationType.FILE_URI,
@@ -91,12 +86,14 @@ export class SelectFilePage {
         this.totalFiles++;
         file.path=data;
         file.name=data.substr(data.lastIndexOf('/')+1);
-        this.files.push(file);
+        this.zone.run(() => {
+          this.files.push(file);
+        });
         }, (error) => {
           alert(error);
         }, options
       );
-    });
+    
   }
   upload()
   {
@@ -122,7 +119,6 @@ export class SelectFilePage {
 
   uploadFile(filepath,filename)
   {
-    //var filepath=data.filepath;
         function win(r) {
             console.log("Code = " + r.responseCode);
             console.log("Response = " + r.response);
@@ -155,5 +151,38 @@ export class SelectFilePage {
         };
 
         ft.upload(filepath, uri, win, fail, options); 
+  }
+  chgopt(file)
+  {
+    var i=this.files.indexOf(file);
+ this.zone.run(() => {
+    if(this.files[i].option=='B/W')
+    {
+      this.files[i].option='COL';
+      document.getElementById(this.files[i].name).removeAttribute("light");
+    }
+    else if(this.files[i].option=='COL')
+    {
+      this.files[i].option='B/W';
+    }
+    });
+  }
+  rmfile(file)
+  {
+    var i=this.files.indexOf(file);
+    //alert(i);
+    // this.zone.run(() => {
+    this.files.splice(i,1);
+    //});
+  }
+  addcopy(file)
+  {
+    var i=this.files.indexOf(file);
+    this.files[i].copies=this.files[i].copies+1;
+  }
+  rmcopy(file)
+  {
+    var i=this.files.indexOf(file);
+    this.files[i].copies=this.files[i].copies-1;
   }
 }

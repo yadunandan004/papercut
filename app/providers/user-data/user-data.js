@@ -1,5 +1,5 @@
 import {Injectable} from 'angular2/core';
-import {Storage, SqlStorage,LocalStorage,Platform} from 'ionic-framework/ionic'; 
+import {Storage, SqlStorage,LocalStorage,Platform} from 'ionic-angular'; 
 
 
 /*
@@ -15,7 +15,7 @@ static get parameters() {
   }
   constructor(platform) {
     this.platform=platform;
-    this.user='yadu';
+    //this.user='yadu';
     this.orders=new Array();
   }
   saveOrder(order)
@@ -66,7 +66,33 @@ static get parameters() {
       }
       else
       {
-        alert('user session already present');
+        //alert('user session already present');
+        var person='';
+        this.getPerson((data)=>{
+          person=data;
+          qr="DELETE FROM person";
+        this.storage.query(qr).then((data)=>{
+          qr="DELETE FROM "+person;
+          this.storage.query(qr).then((data)=>{
+               qr="INSERT INTO person (type) VALUES('"+details.type+"')";
+        this.storage.query(qr).then((data)=>{
+            this.createAccount(details,(data)=>{
+              fn(data);
+            });
+        },(error)=>{
+          alert(JSON.stringify(error.err)+ ' from device');
+        });
+          },(error)=>{
+            alert('no such thing');
+          });
+       
+        },(error)=>{
+          alert(JSON.stringify(error.err)+ ' from device');
+        });
+        },(error)=>{
+          alert('some error');
+        });
+        
       }
     }
     ,(error)=>{
@@ -182,15 +208,19 @@ static get parameters() {
           alert(error.err);
        });
   }
-  logout(person)
+  logout()
   { 
     this.storage = new Storage(SqlStorage);
     var qr="DROP TABLE IF EXISTS person";
     this.storage.query(qr).then((data)=>{
-      qr="DROP TABLE IF EXISTS "+ person;
+      qr="DROP TABLE IF EXISTS user";
       this.storage.query(qr).then((data)=>{
-        //alert(JSON.stringify(data.res)); 
-         navigator.app.exitApp();
+         qr="DROP TABLE IF EXISTS shop";
+         this.storage.query(qr).then((data)=>{
+          navigator.app.exitApp();
+        },(error)=>{
+          alert("ERROR -> " + JSON.stringify(error.err));
+        });      
       },(error)=>{
           alert("ERROR -> " + JSON.stringify(error.err));
       });
@@ -212,4 +242,3 @@ static get parameters() {
 
   } 
 }
-

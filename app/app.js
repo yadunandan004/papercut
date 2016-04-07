@@ -1,7 +1,7 @@
-import {App,IonicApp, Platform,Alert,Config} from 'ionic-framework/ionic';
+import {App,IonicApp, Platform,Alert,Config} from 'ionic-angular';
 import {LoginPage} from './pages/login/login';
-import {PrintPage} from './pages/print/print';
-import {ShopselPage} from './pages/shopsel/shopsel';
+import {WalletPage} from './pages/wallet/wallet';
+import {AboutPage} from './pages/about/about';
 import {Inject} from 'angular2/core';
 import {UserData} from './providers/user-data/user-data';
 
@@ -17,27 +17,19 @@ export class MyApp {
   
   constructor(platform,app,userData) {
      this.app = app;
-
     this.platform = platform;
-    this.userData=userData;
-    
-    this.pages = [
-      { title: 'Login Page', component: LoginPage },
-      { title: 'Print Page',component:PrintPage},
-      {title:'Shop Selection',component:ShopselPage}
-      ];
-   
-      this.rootPage = LoginPage;
-    
-    
+    this.userData=userData;    
+    this.rootPage = LoginPage;
+    this.pages = [{title:'Wallet',component:WalletPage},
+    {title:'AboutUs',component:AboutPage}]; 
     this.platform.ready().then(() => {
 
               
-               this.userData.getPerson((data)=>{
+              /* this.userData.getPerson((data)=>{
                     if(typeof(data)!=='undefined')
                     {
                       var nav=this.app.getComponent('nav');
-                      nav.setRoot(PrintPage);
+                      nav.setRoot(ProfilePage);
                     }
                 },(err)=>{
                   if(err==1)
@@ -46,7 +38,7 @@ export class MyApp {
                       //alert('table created');
                       });
                   }
-                });
+                });*/
               
             
       // The platform is now ready. Note: if this callback fails to fire, follow
@@ -68,6 +60,13 @@ export class MyApp {
           }
     });
   }
+  openPage(page) {
+    // close the menu when clicking a link from the menu
+    this.app.getComponent('leftMenu').close();
+    // navigate to the new page if it is not the current page
+    var navg = this.app.getComponent('nav');
+    navg.setRoot(page.component);
+  }
   logout()
   {
    var alert = Alert.create({
@@ -83,18 +82,12 @@ export class MyApp {
                 {
                   text: 'Ya',
                   handler: data => {
-                    this.userData.logout('user');
+                    this.userData.logout();
                   }
                 }]
                 });
-   this.userData.logout('user');
+   this.userData.logout();
    //this.app.present(alert); 
   }
-  openPage(page) {
-    // close the menu when clicking a link from the menu
-    this.app.getComponent('leftMenu').close();
-    // navigate to the new page if it is not the current page
-    var navg = this.app.getComponent('nav');
-    navg.setRoot(page.component);
-  }
+  
 }

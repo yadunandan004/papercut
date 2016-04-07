@@ -5,16 +5,13 @@
   Ionic pages and navigation.
 -->
 <ion-navbar *navbar>
-  <button menuToggle>
-    <ion-icon name="menu"></ion-icon>
-  </button>
-  <ion-title>Signup Page</ion-title>
+  <ion-title>Select File</ion-title>
 </ion-navbar>
 
 
 <ion-content  class="select-file" scroll="false">
   <form class="list">
-  		<ion-card>
+      <ion-card>
   <ion-card-header>
     Add a Page
   </ion-card-header>
@@ -28,9 +25,26 @@
   </form>
   <ion-list>
  <ion-item-divider light>Files</ion-item-divider>
-  <ion-item *ngFor="#file of files">
-    {{file.name}}
-  </ion-item>
+  <ion-item-sliding *ngFor="#file of files">
+  <ion-item >
+    <ion-icon name="document" item-left></ion-icon>  
+    <h2>{{file.name}}</h2>
+    <button round (click)="rmcopy(file)">   <ion-icon name="remove"></ion-icon>   </button>
+    {{file.copies}}
+    <button round (click)="addcopy(file)">   <ion-icon name="add"></ion-icon>   </button>
+    <p>Swipe Left for more options..</p>
+    </ion-item>
+    <ion-item-options>
+      <button light (click)="chgopt(file)">
+        <ion-icon name="color-fill"></ion-icon>
+        {{file.option}}
+      </button>
+      <button danger (click)="rmfile(file)">
+        <ion-icon name="trash"></ion-icon>
+        Delete
+      </button>
+    </ion-item-options>
+    </ion-item-sliding>
 </ion-list>
   <button danger block (click)="upload()">Order</button>
 </ion-content>

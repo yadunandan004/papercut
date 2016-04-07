@@ -1,7 +1,7 @@
-import {Page,NavController,NavParams,Alert,Platform} from 'ionic-framework/ionic';
+import {Page,NavController,NavParams,Alert,Platform,IonicApp} from 'ionic-angular';
 import {Inject} from 'angular2/core';
 import {SignupPage} from '../signup/signup';
-import {PrintPage} from '../print/print';
+import {ProfilePage} from '../profile/profile';
 import {UserData} from '../../providers/user-data/user-data';
 
 //import {UserData} from '../../providers/user-data/user-data';
@@ -18,13 +18,18 @@ import {UserData} from '../../providers/user-data/user-data';
 export class LoginPage {
 
   static get parameters() {
-    return [[NavController],[NavParams],[Platform],[UserData]];
+    return [[NavController],[NavParams],[Platform],[UserData],[IonicApp]];
   }
-  constructor(nav,navParams,platform,userData) {
+  constructor(nav,navParams,platform,userData,app) {
   		this.nav= nav;
       this.userData=userData;             
       this.platform=platform;
       this.checkConnection(); 
+      this.app=app;
+    this.app.getComponent('leftMenu').enable(false);
+  }
+   onPageWillLeave() {
+    this.app.getComponent('leftMenu').enable(true);
   }
     signup(event, item) {
      this.nav.push(SignupPage);
@@ -33,15 +38,15 @@ export class LoginPage {
     {
       var url = 'https://print-yadunandan004.c9users.io:8080/users/readuser';
      cordovaHTTP.post(url, {
-    email: this.email,
+    email: this.email.trim(),
     pass: this.pass
     },{'Content-type' :  'application/json'},response=>{
     try {
         var resdat=JSON.parse(response.data);
-        this.userData.createPerson(resdat,(data)=>{
+        this.userData.createPerson(resdat,(data)=>{         
           if(data==1)
-          {            
-            this.nav.setRoot(PrintPage,{data:resdat}); 
+          {                       
+            this.nav.setRoot(ProfilePage,{data:resdat}); 
           }
         });
 
