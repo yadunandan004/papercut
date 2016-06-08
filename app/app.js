@@ -2,9 +2,10 @@ import {App,IonicApp, Platform,Alert,Config} from 'ionic-angular';
 import {LoginPage} from './pages/login/login';
 import {WalletPage} from './pages/wallet/wallet';
 import {AboutPage} from './pages/about/about';
+import {ProfilePage} from './pages/profile/profile';
 import {Inject} from 'angular2/core';
 import {UserData} from './providers/user-data/user-data';
-
+import {Splashscreen} from 'ionic-native';
 @App({
   templateUrl: 'build/app.html',
   config: {}, // http://ionicframework.com/docs/v2/api/config/Config/
@@ -18,9 +19,11 @@ export class MyApp {
   constructor(platform,app,userData) {
      this.app = app;
     this.platform = platform;
-    this.userData=userData;    
+    this.userData=userData;
+       
     this.rootPage = LoginPage;
-    this.pages = [{title:'Wallet',component:WalletPage},
+    this.pages = [{title:'Profile',component:ProfilePage},
+    {title:'Wallet',component:WalletPage},
     {title:'AboutUs',component:AboutPage}]; 
     this.platform.ready().then(() => {
 

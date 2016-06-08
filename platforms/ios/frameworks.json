@@ -1,0 +1,10 @@
+{
+    "AudioToolbox.framework": 1,
+    "ImageIO.framework": 1,
+    "CoreLocation.framework": 2,
+    "AVFoundation.framework": 1,
+    "Security.framework": 1,
+    "SystemConfiguration.framework": 2,
+    "CoreTelephony.framework": 1,
+    "libsqlite3.dylib": 1
+}

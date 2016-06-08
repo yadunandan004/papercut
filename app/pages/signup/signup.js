@@ -1,7 +1,7 @@
 import {Page,NavController,Platform,Alert} from 'ionic-angular';
 import {UserData} from '../../providers/user-data/user-data';
 import {ProfilePage} from '../profile/profile';
-
+import {FormBuilder, Validators} from 'angular2/common';
 /*
   Generated class for the SignupPage page.
 
@@ -14,14 +14,20 @@ import {ProfilePage} from '../profile/profile';
 })
 export class SignupPage {
   static get parameters() {
-    return [[NavController],[Platform],[UserData]];
+    return [[NavController],[Platform],[UserData],[FormBuilder]];
   }
-  constructor(nav,platform,userData) {
+  constructor(nav,platform,userData,form) {
     this.nav = nav;
     this.userData=userData;
     this.platform=platform;
 		this.profile='usr';
-		
+		 this.signupForm = form.group({ // name should match [ngFormModel] in your html
+      username: ["", Validators.required], // Setting fields as required
+      password: ["", Validators.required],
+      email: ["",Validators.required],
+      college: ["",Validators.required],
+      phone: ["",Validators.required]
+  });
   }
   	signup()
 	{
@@ -54,7 +60,7 @@ export class SignupPage {
 		                  subTitle: 'Signed in Successfully',
 		                  buttons: ['Dismiss']
 		                });
-		                this.nav.present(alert);
+		                //this.nav.present(alert);
 		                this.userData.createPerson('user',resdat,(data)=>{
 				          if(data==1)
 				          {

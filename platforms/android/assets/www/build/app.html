@@ -1,0 +1,18 @@
+<ion-menu id="leftMenu" [content]="content">
+
+  <ion-toolbar>
+    <ion-title>Pages</ion-title>
+  </ion-toolbar>
+
+  <ion-content>
+    <ion-list>
+      <button ion-item *ngFor="#p of pages" (click)="openPage(p)">
+        {{p.title}}
+      </button>
+    </ion-list>
+    <button dark block (click)="logout()">LogOut</button>
+  </ion-content>
+
+</ion-menu>
+
+<ion-nav id="nav" [root]="rootPage" #content  swipe-back-enabled="false"></ion-nav>

@@ -1,6 +1,7 @@
-import {Page,Platform, NavController,ActionSheet,NavParams,Alert} from 'ionic-angular';
+import {Page,Platform, NavController,ActionSheet,NavParams,Alert,IonicApp} from 'ionic-angular';
 import {UserData} from '../../providers/user-data/user-data';
 import {ProfilePage} from '../profile/profile';
+import {SpinnerDialog} from 'ionic-native';
 /*
   Generated class for the ShopselPage page.
   See http://ionicframework.com/docs/v2/components/#navigation for more info on
@@ -13,9 +14,9 @@ import {ProfilePage} from '../profile/profile';
 export class ShopselPage {
   static get parameters()
   {
-    return [[NavController],[Platform],[UserData],[NavParams]];
+    return [[NavController],[Platform],[UserData],[NavParams],[IonicApp]];
   }
-  constructor(nav,platform,userData,navParams) {
+  constructor(nav,platform,userData,navParams,app) {
     this.nav = nav;
     this.userData=userData;
     this.platform = platform;
@@ -26,6 +27,12 @@ export class ShopselPage {
     this.files=navParams.get('src');
     this.shpArr;
     this.city='';
+    this.app=app;
+    SpinnerDialog.show('Logging Map','please wait..');
+    document.addEventListener('deviceready', function () {
+    // cordova.plugins.printer is now available
+    }, false);
+
     CheckGPS.check(function(){
     //GPS is enabled!
     },
@@ -56,7 +63,8 @@ export class ShopselPage {
         for(var i=0;i<this.shpArr.length;i++)
         {
          var LatLng={lat:this.shpArr[i].lat,lng:this.shpArr[i].lng};
-          this.addMarker(LatLng);   
+          this.addMarker(LatLng); 
+          SpinnerDialog.hide();
         }
         } catch(e) {
         console.error("JSON parsing error");
@@ -75,6 +83,7 @@ export class ShopselPage {
           var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
           
           this.getcity(latLng,(data)=>{
+           // SpinnerDialog.hide();
             var mapOptions = {
               center: latLng,
               zoom: 16,
@@ -98,6 +107,7 @@ export class ShopselPage {
 }
 getcity(latlng,fn)
 {
+  //SpinnerDialog.show();
   var geocoder;
 geocoder = new google.maps.Geocoder();
 //var latlng = new google.maps.LatLng(latitude, longitude);
@@ -173,7 +183,7 @@ addMarker(LatLng){
             this.userData.getAccountDetails('user',(data)=>{
               this.sendFile(data.email,shop);
             },(err)=>{
-              alert(err);
+              alert(JSON.stringify(err));
             });
           }
         },
@@ -191,7 +201,6 @@ addMarker(LatLng){
   }
   sendOrder(shop,files,nav)
   {
-     
      var prompt = Alert.create({
       title: 'Order',
       message: "Are you sure?",
@@ -223,11 +232,11 @@ addMarker(LatLng){
             this.userData.newOrder('user',resdat,(data)=>{
               if(data==1)
               {
-                this.nav.setRoot(ProfilePage,{msg:resdat});
+                this.nav.setRoot(ProfilePage,{order:resdat});
               }
             });
             },(error)=>{
-              alert(error);
+              alert(JSON.stringify(error.err));
             });
   }
 }

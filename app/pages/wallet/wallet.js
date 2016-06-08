@@ -1,4 +1,4 @@
-import {Page, NavController} from 'ionic-angular';
+import {Page, NavController,IonicApp} from 'ionic-angular';
 
 /*
   Generated class for the WalletPage page.
@@ -11,10 +11,16 @@ import {Page, NavController} from 'ionic-angular';
 })
 export class WalletPage {
   static get parameters() {
-    return [[NavController]];
+    return [[NavController],[IonicApp]];
   }
 
-  constructor(nav) {
+  constructor(nav,app) {
     this.nav = nav;
+    this.app=app;
+    this.app.getComponent('leftMenu').enable(true);
+    this.amount=1000;
+  }
+  onPageWillLeave() {
+    this.app.getComponent('leftMenu').enable(false);
   }
 }

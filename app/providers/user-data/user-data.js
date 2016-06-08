@@ -205,7 +205,7 @@ static get parameters() {
        this.storage.query(quer).then((data)=>{
           fn(1);
        },(error)=>{
-          alert(error.err);
+          alert(JSON.stringify(error.err));
        });
   }
   logout()
